@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "outDir": "./built",
+      "allowJs": true,
+      "target": "es5"
+    },
+    "include": ["./src/**/*"],
+    "compilerOptions": {
+      "lib": [
+        "es2018",
+        "dom"
+    ]
+    
+    }
+  }
