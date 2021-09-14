@@ -1,39 +1,69 @@
 var canvas = document.querySelector('#canvas');
 var ctx = canvas.getContext('2d');
-var indexs = [];
+var btn = document.querySelector('#p');
 var width = window.innerWidth;
 var height = window.innerHeight;
 canvas.width = width;
 canvas.height = height;
-var x = width / 2;
-var y = height;
-var person = new Player(x, y, 30, 'blue');
-// indexs.push({ x, y })
-person.draw();
-window.addEventListener('click', function (event) {
-    var x = event.clientX;
-    var y = event.clientY;
-    console.log(x + " " + y);
-    indexs.push({ x: x, y: y });
-    var Project = new ProjectDot(x, y, 5, 'red', { x: 1, y: 1 });
-    Project.draw();
-});
-function drawLines() {
-    var i = 0;
-    var inter = setInterval(function () {
-        if (i === indexs.length - 2) {
-            clearInterval(inter);
-            return;
-        }
-        // console.log('call')
-        ctx.beginPath();
-        ctx.lineWidth = 5;
-        ctx.lineCap = "round";
-        ctx.strokeStyle = "blue";
-        ctx.moveTo(indexs[i].x, indexs[i].y);
-        ctx.lineTo(indexs[i + 1].x, indexs[i + 1].y);
-        ctx.stroke();
-        i++;
-    }, 500);
-    console.log(indexs);
+var p_x = width / 2;
+var p_y = height;
+var score = 0;
+var ProjectPoints = [];
+var Enemys = [];
+var person = new Player(p_x, height, 30, 'blue');
+var color = ['red', 'black', 'yellow', 'green'];
+var shot_max = false;
+// for make the gun shot
+window.addEventListener('click', AddPoint);
+function AddPoint(event) {
+    var index = Math.floor(Math.random() * color.length);
+    var x = event.clientX - p_x;
+    var y = event.clientY - p_y;
+    var angle = Math.atan2(y, x);
+    var Project = new ProjectDot(p_x, p_y, 5, color[index], { x: Math.cos(angle), y: Math.sin(angle) }, 4);
+    //  console.log(Project);
+    ProjectPoints.push(Project);
 }
+//enemy Started
+setInterval(function () {
+    var radius = Math.random() * (30 - 10) + 10;
+    var index = Math.floor(Math.random() * color.length);
+    // const color
+    var x;
+    var y;
+    x = width * Math.random();
+    y = 0 - radius;
+    var x1 = p_x - x;
+    var y2 = p_y - y;
+    var angle = Math.atan2(y2, x1);
+    var speed = {
+        y: Math.sin(angle),
+        x: Math.cos(angle)
+    };
+    Enemys.push(new Enemy(x, y, radius, color[index], speed));
+    // console.log(Enemys, ProjectPoints)
+}, 1000);
+function animate() {
+    requestAnimationFrame(animate);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    person.draw();
+    ProjectPoints.forEach(function (point) {
+        point.update();
+    });
+    Enemys.forEach(function (e, index1) {
+        e.update();
+        ProjectPoints.forEach(function (point, index2) {
+            var diff = Math.hypot(point.x - e.x, point.y - e.y) - point.radius - e.radius;
+            if (diff < 1) {
+                setTimeout(function () {
+                    score++;
+                    btn.innerHTML = "" + score;
+                    ProjectPoints.splice(index2, 1);
+                    Enemys.splice(index1, 1);
+                });
+            }
+        });
+    });
+}
+// call for gun hoot
+animate();

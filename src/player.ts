@@ -15,6 +15,7 @@ class Player {
     y: number;
     radius: number;
     color: string;
+    factor:number;
 
     constructor(x: number, y: number, radius, color) {
 
@@ -35,41 +36,35 @@ class Player {
 
 
 
-class ProjectDot {
+class ProjectDot extends Player{
 
   
 
-    x: number;
-    y: number;
-    radius: number;
-    color: string;
+  
     velocity:velocity;
 
-    constructor(x: number, y: number, radius, color,velocity) {
+    constructor(x: number, y: number, radius, color,velocity,factor=1) {
 
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
-        this.color = color;
+        super(x, y, radius, color)
         this.velocity = velocity;
+        this.factor=factor;
 
-    }
-
-    draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = this.color;
-        ctx.fill();
     }
 
     update(){
 
         this.draw()
-        this.x-this.x+this.velocity.x;
-        this.y-this.y+this.velocity.y;
+        this.x=this.x+ this.factor*this.velocity.x;
+        this.y=this.y+ this.factor*this.velocity.y;
 
     }
+}
 
-    
+class Enemy extends ProjectDot{
+
+    constructor(x: number, y: number, radius, color,velocity,factor=1){
+        super(x, y, radius, color, velocity,factor);
+    }
+
 }
 
