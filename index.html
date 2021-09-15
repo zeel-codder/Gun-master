@@ -23,18 +23,21 @@
 
     .line-draw {
         position: fixed;
-        left: 50%;
+        left: 0%;
         top:0%;
-        transform:translateX(-50%);
+        
         z-index: 12;
         display: flex;
         flex-wrap: wrap;
        
     }
+    #canvas{
+        background-color:black
+    }
 
     .line-draw >button{
         z-index: 12;
-        padding: .2rem;
+        padding: .3rem;
         cursor:pointer;
         color: white;
         background-color:blue;
@@ -43,7 +46,13 @@
         border-radius:2px;
         font-weight: border;
         font-size:1.5rem;
+        margin:.3rem;
+        border-radius: 3px;
 
+    }
+
+    .line-draw >button:hover{
+        background-color:red;
     }
 
 
@@ -58,8 +67,9 @@
         
         <button  >Point :<span id="p">0</span></span></button>
         <button onclick="Start()">Start</span></button>
-        <button onclick="ReSet()">Restart</span></button>
+        <button onclick="ReSet()">ReSet</span></button>
     </div>
+    <audio src="1.mp3" id="Shoot"></audio>
     
 </body>
 <script>var exports = {};</script>
