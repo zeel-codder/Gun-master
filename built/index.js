@@ -13,8 +13,8 @@ var Enemys = [];
 var person = new Player(p_x, height, 30, 'blue');
 var color = ['red', 'black', 'yellow', 'green'];
 var shot_max = false;
-// for make the gun shot
-window.addEventListener('click', AddPoint);
+var enemy_loop = 0;
+var start = false;
 function AddPoint(event) {
     var index = Math.floor(Math.random() * color.length);
     var x = event.clientX - p_x;
@@ -22,27 +22,38 @@ function AddPoint(event) {
     var angle = Math.atan2(y, x);
     var Project = new ProjectDot(p_x, p_y, 5, color[index], { x: Math.cos(angle), y: Math.sin(angle) }, 4);
     //  console.log(Project);
-    ProjectPoints.push(Project);
+    if (start) {
+        ProjectPoints.push(Project);
+    }
+    else {
+        start = true;
+    }
 }
-//enemy Started
-setInterval(function () {
-    var radius = Math.random() * (30 - 10) + 10;
-    var index = Math.floor(Math.random() * color.length);
-    // const color
-    var x;
-    var y;
-    x = width * Math.random();
-    y = 0 - radius;
-    var x1 = p_x - x;
-    var y2 = p_y - y;
-    var angle = Math.atan2(y2, x1);
-    var speed = {
-        y: Math.sin(angle),
-        x: Math.cos(angle)
-    };
-    Enemys.push(new Enemy(x, y, radius, color[index], speed));
-    // console.log(Enemys, ProjectPoints)
-}, 1000);
+function Start() {
+    // for make the gun shot
+    window.addEventListener('click', AddPoint);
+    //enemy Started
+    enemy_loop = setInterval(function () {
+        var radius = Math.random() * (30 - 10) + 10;
+        var index = Math.floor(Math.random() * color.length);
+        // const color
+        var x;
+        var y;
+        x = width * Math.random();
+        y = 0 - radius;
+        var x1 = p_x - x;
+        var y2 = p_y - y;
+        var angle = Math.atan2(y2, x1);
+        var speed = {
+            y: Math.sin(angle),
+            x: Math.cos(angle)
+        };
+        Enemys.push(new Enemy(x, y, radius, color[index], speed));
+        // console.log(Enemys, ProjectPoints)
+    }, 1000);
+    // call for gun hoot
+    animate();
+}
 function animate() {
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -63,7 +74,24 @@ function animate() {
                 });
             }
         });
+        var diff = Math.hypot(p_x - e.x, p_y - e.y) - 30 - e.radius;
+        if (diff < 1) {
+            setTimeout(function () {
+                alert("Game End score=" + score);
+                ReSet();
+            });
+            return;
+        }
     });
 }
-// call for gun hoot
-animate();
+function ReSet() {
+    Enemys = [];
+    ProjectPoints = [];
+    score = 0;
+    btn.innerHTML = "" + score;
+    window.removeEventListener('click', AddPoint);
+    if (enemy_loop != 0) {
+        clearInterval(enemy_loop);
+    }
+    start = false;
+}
