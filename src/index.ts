@@ -17,7 +17,7 @@ const p_y: number = height; let score: number = 0;
 let ProjectPoints: ProjectDot[] = []
 let Enemys: Enemy[] = [];
 const person = new Player(p_x, height, 30, 'blue');
-const color: string[] = ['red', 'black', 'yellow', 'green']
+const color: string[] = ['red', 'white', 'yellow', 'green']
 let shot_max: boolean = false;
 let enemy_loop:any=0;
 let start:boolean =false;
@@ -77,7 +77,18 @@ enemy_loop=setInterval(() => {
 
     }
 
-    Enemys.push(new Enemy(x, y, radius, color[index], speed))
+    const factor:number=Math.random()<0.1?
+                        score>50?
+                        4
+                        : 
+                        2
+                        :
+                        Math.random()<0.5?
+                        3
+                        :
+                        1;
+
+    Enemys.push(new Enemy(x, y, radius, color[index], speed,factor))
 
     // console.log(Enemys, ProjectPoints)
 }, 1000)
@@ -86,13 +97,34 @@ animate()
 
 }
 
+// console.log('call')
+
 function animate(): void {
 
+    // console.log(ProjectPoints)
     requestAnimationFrame(animate);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle="rgba(0,0,0,0.4)"
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
     person.draw();
-    ProjectPoints.forEach((point) => {
+    ProjectPoints.forEach((point,index) => {
         point.update();
+
+        const isOut:boolean = point.x+point.radius<0 
+                              || 
+                              point.x-point.radius > width
+                              ||
+                              point.y+point.radius<0
+
+            if (isOut) {
+                setTimeout(() => {
+
+                   
+
+                    ProjectPoints.splice(index, 1);
+                
+                })
+            }
     })
 
     Enemys.forEach((e, index1) => {
@@ -109,7 +141,13 @@ function animate(): void {
                     btn.innerHTML = "" + score;
 
                     ProjectPoints.splice(index2, 1);
-                    Enemys.splice(index1, 1);
+
+                    if(e.radius-10>10){
+                        e.radius-=10;
+                    }else{
+
+                        Enemys.splice(index1, 1);
+                    }
                 })
             }
         })
@@ -120,7 +158,7 @@ function animate(): void {
             setTimeout(() => {
                 alert(`Game End score=${score}`)
                 ReSet();
-            })
+            }) 
             return;
         }
 

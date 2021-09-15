@@ -11,7 +11,7 @@ var score = 0;
 var ProjectPoints = [];
 var Enemys = [];
 var person = new Player(p_x, height, 30, 'blue');
-var color = ['red', 'black', 'yellow', 'green'];
+var color = ['red', 'white', 'yellow', 'green'];
 var shot_max = false;
 var enemy_loop = 0;
 var start = false;
@@ -48,18 +48,41 @@ function Start() {
             y: Math.sin(angle),
             x: Math.cos(angle)
         };
-        Enemys.push(new Enemy(x, y, radius, color[index], speed));
+        var factor = Math.random() < 0.1 ?
+            score > 50 ?
+                4
+                :
+                    2
+            :
+                Math.random() < 0.5 ?
+                    3
+                    :
+                        1;
+        Enemys.push(new Enemy(x, y, radius, color[index], speed, factor));
         // console.log(Enemys, ProjectPoints)
     }, 1000);
     // call for gun hoot
     animate();
 }
+// console.log('call')
 function animate() {
+    // console.log(ProjectPoints)
     requestAnimationFrame(animate);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(0,0,0,0.4)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     person.draw();
-    ProjectPoints.forEach(function (point) {
+    ProjectPoints.forEach(function (point, index) {
         point.update();
+        var isOut = point.x + point.radius < 0
+            ||
+                point.x - point.radius > width
+            ||
+                point.y + point.radius < 0;
+        if (isOut) {
+            setTimeout(function () {
+                ProjectPoints.splice(index, 1);
+            });
+        }
     });
     Enemys.forEach(function (e, index1) {
         e.update();
@@ -70,7 +93,12 @@ function animate() {
                     score++;
                     btn.innerHTML = "" + score;
                     ProjectPoints.splice(index2, 1);
-                    Enemys.splice(index1, 1);
+                    if (e.radius - 10 > 10) {
+                        e.radius -= 10;
+                    }
+                    else {
+                        Enemys.splice(index1, 1);
+                    }
                 });
             }
         });
