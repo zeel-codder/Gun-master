@@ -13,7 +13,8 @@
 
     *{
         margin: 0;
-        padding: 0
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -33,9 +34,34 @@
     }
     #canvas{
         background-color:black
+      
     }
 
-    .line-draw >button{
+    .center{
+        display: flex;
+        background-color:white;
+        position: fixed;
+        z-index: 12;
+        left:50%;
+        top: 50%;
+        align-items: center;
+        justify-content: center;
+        transform: translate(-50%,-50%);
+        flex-direction: column;
+        width:fit-content;
+        padding:2.5rem;
+        font-weight: border;
+        border-radius: 12px;
+
+
+    }
+    .center *{
+        width:100%;
+        margin:.3rem;
+        font-weight:bolder;
+    }
+
+    .line-draw >button,.center button{
         z-index: 12;
         padding: .3rem;
         cursor:pointer;
@@ -55,6 +81,13 @@
         background-color:red;
     }
 
+    .none{
+        display:none;
+    }
+    #p2{
+        text-align:center;
+    }
+
 
 </style>
 
@@ -66,13 +99,26 @@
 
         
         <button  >Point :<span id="p">0</span></span></button>
-        <button onclick="Start()">Start</span></button>
-        <button onclick="ReSet()">ReSet</span></button>
+        <!-- <button onclick="Start()">Start</span></button> -->
+        <!-- <button onclick="ReSet()">ReSet</span></button> -->
+    </div>
+
+    <div class="center tutorial">
+        <h1>Tutorial</h1>
+        <p>Move the Hero (˂  and ˃ )</p>
+        <p>Fire (Click on the enemy or  ˄ )</p>
+        <button onclick="Start()">Start</button>
+    </div>
+
+    <div class="center score none">
+        <h1>Your Score</h1>
+        <h2 id="p2">0</h2>
+        <button onclick="Start()">Play Again</button>
     </div>
     <audio src="1.mp3" id="Shoot"></audio>
     
 </body>
 <script>var exports = {};</script>
-<script type="text/javascript" src="/built/player.js"></script>
+<script type="text/javascript" src="/built/Variable.js"></script>
 <script type="text/javascript" src="/built/index.js"></script>
 </html>

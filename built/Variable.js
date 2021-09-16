@@ -52,3 +52,20 @@ var Enemy = /** @class */ (function (_super) {
     }
     return Enemy;
 }(ProjectDot));
+var SmallPoint = /** @class */ (function (_super) {
+    __extends(SmallPoint, _super);
+    function SmallPoint(x, y, radius, color, velocity, factor) {
+        if (factor === void 0) { factor = 1; }
+        var _this = _super.call(this, x, y, radius, color, velocity, factor) || this;
+        _this.opacity = 1;
+        return _this;
+    }
+    SmallPoint.prototype.update = function () {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        this.opacity -= 0.01;
+        _super.prototype.update.call(this);
+        ctx.restore();
+    };
+    return SmallPoint;
+}(Enemy));

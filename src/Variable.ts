@@ -68,3 +68,22 @@ class Enemy extends ProjectDot{
 
 }
 
+
+class SmallPoint extends Enemy{
+
+    opacity: number;
+
+
+    constructor(x: number, y: number, radius, color,velocity,factor=1){
+        super(x, y, radius, color, velocity,factor);
+        this.opacity=1;
+    }
+
+    update(){
+        ctx.save()
+        ctx.globalAlpha=this.opacity;
+        this.opacity-=0.01;
+        super.update();
+        ctx.restore()
+    }
+}

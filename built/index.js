@@ -1,7 +1,11 @@
 var canvas = document.querySelector('#canvas');
 var btn = document.querySelector('#p');
+var btn_ans = document.querySelector('#p2');
 var shoot = document.querySelector('#Shoot');
+var tutorial = document.querySelector('.tutorial');
+var Show_Score = document.querySelector('.score');
 var ctx = canvas.getContext('2d');
+//canvas dimensions
 var width = window.innerWidth;
 var height = window.innerHeight;
 canvas.width = width;
@@ -12,10 +16,14 @@ var score = 0;
 var ProjectPoints = [];
 var Enemys = [];
 var person = new Player(p_x, height, 30, 'blue');
+var Particals = [];
 var color = ['red', 'white', 'yellow', 'green'];
 var shot_max = false;
 var enemy_loop = 0;
 var start = false;
+/*
+Functions is User for generator Bullet based on user click
+*/
 function AddPoint(event) {
     // console.log(event);
     // if(event.isTrusted=="Enter") return;
@@ -35,9 +43,14 @@ function AddPoint(event) {
     }
     console.log('call1');
 }
+/*
+Functions is User for generator Bullet To Top
+*/
 function AddPointUp(event) {
     // console.log(event);
     var key = event.key;
+    if (key == 'Enter')
+        return;
     var nu = 6;
     console.log(key);
     if (event.shiftKey || key == "ArrowUp") {
@@ -75,46 +88,13 @@ function AddPointUp(event) {
     }
     // console.log('call')
 }
-function Start() {
-    // for make the gun shot
-    shoot.loop = true;
-    shoot.play();
-    // window.addEventListener('ArrowLeft', AddPointUp);
-    window.addEventListener('keydown', AddPointUp);
-    window.addEventListener('mousedown', AddPoint);
-    //enemy Started
-    enemy_loop = setInterval(function () {
-        var radius = Math.random() * (30 - 10) + 10;
-        var index = Math.floor(Math.random() * color.length);
-        // const color
-        var x;
-        var y;
-        x = width * Math.random();
-        y = 0 - radius;
-        var speed = {
-            y: 1,
-            x: 0
-        };
-        var factor = Math.random() < 0.1 ?
-            score > 50 ?
-                4
-                :
-                    2
-            :
-                Math.random() < 0.5 ?
-                    2
-                    :
-                        1;
-        Enemys.push(new Enemy(x, y, radius, color[index], speed, factor));
-        // console.log(Enemys, ProjectPoints)
-    }, 1500);
-    // call for gun hoot
-    animate();
-}
 // console.log('call')
+/***
+ * Functions is User to make the all change in our person and enemy
+ */
 function animate() {
     // console.log(ProjectPoints)
-    requestAnimationFrame(animate);
+    var animateId = requestAnimationFrame(animate);
     ctx.fillStyle = "rgba(0,0,0,0.4)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     person.draw();
@@ -126,31 +106,35 @@ function animate() {
             ||
                 point.y + point.radius < 0;
         if (isOut) {
-            setTimeout(function () {
-                ProjectPoints.splice(index, 1);
-            });
+            ProjectPoints.splice(index, 1);
         }
     });
     Enemys.forEach(function (e, index1) {
         e.update();
         var isOut = e.y - e.radius > height;
         if (isOut) {
-            setTimeout(function () {
-                Enemys.splice(index1, 1);
-            });
+            Enemys.splice(index1, 1);
         }
         else {
             ProjectPoints.forEach(function (point, index2) {
                 var diff = Math.hypot(point.x - e.x, point.y - e.y) - point.radius - e.radius;
                 if (diff < 1) {
                     setTimeout(function () {
-                        score++;
-                        btn.innerHTML = "" + score;
                         ProjectPoints.splice(index2, 1);
                         if (e.radius - 10 > 10) {
+                            score = score + Math.floor(e.radius) - 10;
+                            btn.innerHTML = "" + score;
+                            for (var i = 0; i < Math.random() * (e.radius + 10); i++) {
+                                Particals.push(new SmallPoint(e.x, e.y, 5 * Math.random(), e.color, {
+                                    x: (Math.random() - 0.5) * (Math.random() * 10),
+                                    y: (Math.random() - 0.5) * (Math.random() * 10),
+                                }));
+                            }
                             e.radius -= 10;
                         }
                         else {
+                            score = score + Math.floor(e.radius);
+                            btn.innerHTML = "" + score;
                             Enemys.splice(index1, 1);
                         }
                     });
@@ -159,24 +143,108 @@ function animate() {
             var diff = Math.hypot(person.x - e.x, person.y - e.y) - person.radius - e.radius;
             if (diff < 1) {
                 setTimeout(function () {
-                    alert("Game End score=" + score);
-                    ReSet();
+                    if (start) {
+                        btn_ans.innerHTML = "" + score;
+                        Show_Score.classList.remove('none');
+                        cancelAnimationFrame(animateId);
+                        ReSet();
+                    }
                 });
                 return;
             }
         }
     });
+    Particals.forEach(function (Point, index) {
+        Point.update();
+        if (Point.opacity <= 0) {
+            Particals.splice(index, 1);
+        }
+    });
+}
+function Start() {
+    // for make the gun shot
+    if (!tutorial.classList.contains('none')) {
+        tutorial.classList.add('none');
+    }
+    if (!Show_Score.classList.contains('none')) {
+        Show_Score.classList.add('none');
+    }
+    shoot.loop = true;
+    shoot.play();
+    // window.addEventListener('ArrowLeft', AddPointUp);
+    window.addEventListener('keydown', AddPointUp);
+    window.addEventListener('mousedown', AddPoint);
+    //enemy Started
+    enemy_loop = setInterval(function () {
+        var max = score / 1000 + 1;
+        for (var i = 0; i < max; i++) {
+            var radius = Math.random() * (40 - 10) + 10;
+            var index = Math.floor(Math.random() * color.length);
+            // const color
+            var x = void 0;
+            var y = void 0;
+            var po = Math.random();
+            if (po < .5) {
+                x = width * Math.random();
+                y = 0 - radius;
+            }
+            else if (po >= .5 && po < 0.7) {
+                x = 0 - radius;
+                y = (height - person.radius) * Math.random();
+            }
+            else {
+                x = width + radius;
+                y = (height - person.radius) * Math.random();
+            }
+            var speed = {
+                y: 1,
+                x: 0
+            };
+            if (Math.random() < .5) {
+                var x1 = person.x - x;
+                var y1 = person.y - y;
+                var angle = Math.atan2(y1, x1);
+                speed.x = Math.cos(angle);
+                speed.y = Math.sin(angle);
+            }
+            var factor = Math.random() < 0.1
+                ?
+                    score > 50
+                        ?
+                            score > 100 ?
+                                5
+                                :
+                                    3
+                        :
+                            score > 100 ?
+                                4
+                                :
+                                    2
+                :
+                    Math.random() < 0.5
+                        ?
+                            2
+                        :
+                            1;
+            Enemys.push(new Enemy(x, y, radius, color[index], speed, factor));
+            // console.log(Enemys, ProjectPoints)
+        }
+    }, 1500);
+    // call for gun hoot
+    animate();
 }
 function ReSet() {
     Enemys = [];
     ProjectPoints = [];
+    Particals = [];
     score = 0;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.clearRect()
+    shoot.pause();
     btn.innerHTML = "" + score;
     window.removeEventListener('mousedown', AddPoint);
     window.removeEventListener('keydown', AddPointUp);
-    if (enemy_loop != 0) {
-        clearInterval(enemy_loop);
-    }
-    person = new Player(p_x, height, 30, 'blue');
+    clearInterval(enemy_loop);
+    // person = new Player(p_x, height, 30, 'blue');
     start = false;
 }
