@@ -2,8 +2,8 @@ var canvas = document.querySelector('#canvas');
 var btn = document.querySelector('#p');
 var btn_ans = document.querySelector('#p2');
 var shoot = document.querySelector('#Shoot');
-var tutorial = document.querySelector('.tutorial');
-var Show_Score = document.querySelector('.score');
+var tutorial = document.querySelector('.center');
+// const Show_Score:HTMLDivElement=document.querySelector('.score')
 var ctx = canvas.getContext('2d');
 //canvas dimensions
 var width = window.innerWidth;
@@ -13,6 +13,7 @@ canvas.height = height;
 var p_x = width / 2;
 var p_y = height;
 var score = 0;
+var animateId = 0;
 var ProjectPoints = [];
 var Enemys = [];
 var person = new Player(p_x, height, 30, 'blue');
@@ -94,7 +95,7 @@ function AddPointUp(event) {
  */
 function animate() {
     // console.log(ProjectPoints)
-    var animateId = requestAnimationFrame(animate);
+    animateId = requestAnimationFrame(animate);
     ctx.fillStyle = "rgba(0,0,0,0.4)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     person.draw();
@@ -124,6 +125,11 @@ function animate() {
                         if (e.radius - 10 > 10) {
                             score = score + Math.floor(e.radius) - 10;
                             btn.innerHTML = "" + score;
+                            SendMyScore(score);
+                            if (EnemyEndPoint != -1 && EnemyEndPoint < score) {
+                                ReSet();
+                                ShowResult(score);
+                            }
                             for (var i = 0; i < Math.random() * (e.radius + 10); i++) {
                                 Particals.push(new SmallPoint(e.x, e.y, 5 * Math.random(), e.color, {
                                     x: (Math.random() - 0.5) * (Math.random() * 10),
@@ -135,6 +141,7 @@ function animate() {
                         else {
                             score = score + Math.floor(e.radius);
                             btn.innerHTML = "" + score;
+                            SendMyScore(score);
                             Enemys.splice(index1, 1);
                         }
                     });
@@ -144,9 +151,10 @@ function animate() {
             if (diff < 1) {
                 setTimeout(function () {
                     if (start) {
-                        btn_ans.innerHTML = "" + score;
-                        Show_Score.classList.remove('none');
-                        cancelAnimationFrame(animateId);
+                        YourMathEnd(score);
+                        if (EnemyEndPoint != -1) {
+                            ShowResult(score);
+                        }
                         ReSet();
                     }
                 });
@@ -234,10 +242,16 @@ function Start() {
     animate();
 }
 function ReSet() {
+    btn_ans.innerHTML = "" + score;
+    tutorial.classList.remove("none");
+    if (WaitBox.classList.contains("none")) {
+        Show_Score.classList.remove('none');
+    }
+    cancelAnimationFrame(animateId);
     Enemys = [];
     ProjectPoints = [];
     Particals = [];
-    score = 0;
+    // score = 0;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // ctx.clearRect()
     shoot.pause();

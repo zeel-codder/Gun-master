@@ -3,8 +3,8 @@ const canvas: HTMLCanvasElement  = document.querySelector('#canvas');
 const btn: HTMLButtonElement = document.querySelector('#p')
 const btn_ans: HTMLButtonElement = document.querySelector('#p2')
 const shoot: HTMLAudioElement = document.querySelector('#Shoot')
-const tutorial: HTMLDivElement=document.querySelector('.tutorial')
-const Show_Score:HTMLDivElement=document.querySelector('.score')
+const tutorial: HTMLDivElement=document.querySelector('.center')
+// const Show_Score:HTMLDivElement=document.querySelector('.score')
 
 
 const ctx:any = canvas.getContext('2d');
@@ -17,6 +17,7 @@ canvas.width = width;
 canvas.height = height
 const p_x: number = width / 2;
 const p_y: number = height; let score: number = 0;
+let animateId:number =0;
 
 
 
@@ -131,7 +132,7 @@ function AddPointUp(event: KeyboardEvent) {
 function animate(): void {
 
     // console.log(ProjectPoints)
-    const animateId=requestAnimationFrame(animate);
+    animateId=requestAnimationFrame(animate);
 
     ctx.fillStyle = "rgba(0,0,0,0.4)"
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -183,6 +184,11 @@ function animate(): void {
 
                             score=score+Math.floor(e.radius)-10;
                             btn.innerHTML = "" + score;
+                            SendMyScore(score);
+                            if(EnemyEndPoint!=-1 && EnemyEndPoint<score){
+                                ReSet()
+                                ShowResult(score);
+                            }
 
                             for (let i = 0; i < Math.random() * (e.radius + 10); i++) {
                                 Particals.push(
@@ -208,6 +214,7 @@ function animate(): void {
 
                         score=score+Math.floor(e.radius);
                         btn.innerHTML = "" + score;
+                        SendMyScore(score)
 
                             Enemys.splice(index1, 1);
                         }
@@ -223,10 +230,14 @@ function animate(): void {
             if (diff < 1) {
                 setTimeout(() => {
                     if(start){
-                        btn_ans.innerHTML=""+score;
-                        Show_Score.classList.remove('none')
-                        cancelAnimationFrame(animateId)
+                        YourMathEnd(score)
+                        if(EnemyEndPoint!=-1){
+
+                            ShowResult(score)
+
+                        }
                         ReSet();
+
                     }
                 })
                 return;
@@ -366,10 +377,16 @@ function Start(): void {
 
 
 function ReSet(): void {
+    btn_ans.innerHTML=""+score;
+    tutorial.classList.remove("none")
+    if(WaitBox.classList.contains("none")){
+        Show_Score.classList.remove('none')
+    }
+    cancelAnimationFrame(animateId)
     Enemys = [];
     ProjectPoints = [];
     Particals = []
-    score = 0;
+    // score = 0;
     ctx.clearRect(0,0,canvas.width,canvas.height)
     // ctx.clearRect()
     shoot.pause()
