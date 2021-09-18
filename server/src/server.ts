@@ -158,13 +158,18 @@ app.get('/',(req:Request,res:Response) => {
 })
 
 
-const port=process.env.PROT || 3000;
+// const port=process.env.PROT || 3000;
 
-server.listen(port, () => {
-  console.log(`Server app listening at http://localhost:${port}`)
-})
+// server.listen(port, () => {
+//   console.log(`Server app listening at http://localhost:${port}`)
+// })
 
 
+const { PORT=3000, LOCAL_ADDRESS='0.0.0.0' } = process.env
+server.listen(PORT, LOCAL_ADDRESS, () => {
+  const address = server.address();
+  console.log('server listening at', address);
+});
 
 
 

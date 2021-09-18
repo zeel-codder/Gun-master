@@ -99,7 +99,12 @@ io.on("connection", function (socket) {
 app.get('/', function (req, res) {
     res.send("Running");
 });
-var port = process.env.PROT || 3000;
-server.listen(port, function () {
-    console.log("Server app listening at http://localhost:" + port);
+// const port=process.env.PROT || 3000;
+// server.listen(port, () => {
+//   console.log(`Server app listening at http://localhost:${port}`)
+// })
+var _a = process.env, _b = _a.PORT, PORT = _b === void 0 ? 3000 : _b, _c = _a.LOCAL_ADDRESS, LOCAL_ADDRESS = _c === void 0 ? '0.0.0.0' : _c;
+server.listen(PORT, LOCAL_ADDRESS, function () {
+    var address = server.address();
+    console.log('server listening at', address);
 });
