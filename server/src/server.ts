@@ -24,7 +24,7 @@ const Room :RoomSchema[]=[]
 
 const io = new Server(server,{
     cors: {
-      origin: 'https://kind-chandrasekhar-2359ab.netlify.app/',
+      origin: '*',
     }
   });
 

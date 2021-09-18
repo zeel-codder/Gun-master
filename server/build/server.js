@@ -10,7 +10,7 @@ var User = [];
 var Room = [];
 var io = new socket_io_1.Server(server, {
     cors: {
-        origin: 'https://kind-chandrasekhar-2359ab.netlify.app/',
+        origin: '*',
     }
 });
 io.on("connection", function (socket) {
