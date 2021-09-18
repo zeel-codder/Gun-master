@@ -1,5 +1,6 @@
 require('dotenv').config()
 var express = require('express');
+import {Request,Response} from 'express';
 var path = require('path');
 var app = express();
 var server = require('http').createServer(app); 
@@ -151,10 +152,13 @@ io.on("connection", (socket) => {
 });
 
 
+app.get('/',(req:Request,res:Response) => {
+
+    res.send("Running")
+})
 
 
-
-const port=process.env.PROT ||3000;
+const port=process.env.PROT || 3000;
 
 server.listen(port, () => {
   console.log(`Server app listening at http://localhost:${port}`)

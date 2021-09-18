@@ -96,6 +96,9 @@ io.on("connection", function (socket) {
         // //console.log('User)
     });
 });
+app.get('/', function (req, res) {
+    res.send("Running");
+});
 var port = process.env.PROT || 3000;
 server.listen(port, function () {
     console.log("Server app listening at http://localhost:" + port);
