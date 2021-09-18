@@ -10,19 +10,19 @@ var User = [];
 var Room = [];
 var io = new socket_io_1.Server(server, {
     cors: {
-        origin: 'http://127.0.0.1:5500',
+        origin: 'https://kind-chandrasekhar-2359ab.netlify.app/',
     }
 });
 io.on("connection", function (socket) {
-    // console.log(socket.id)
+    // //console.log(socket.id)
     socket.on("AddUser", function (id, fun) {
         var find = User.find(function (data) { return data.username === id; });
-        // console.log(find)
+        // //console.log(find)
         if (!find && User.length < 100) {
             User.push({ username: id, isJoin: false, id: socket.id });
-            console.log(User);
+            //console.log(User)
             socket.emit("UserNotFound", true);
-            console.log(fun());
+            //console.log(fun())
             fun();
         }
         else {
@@ -33,7 +33,7 @@ io.on("connection", function (socket) {
     socket.on("FindUser", function (id) {
     });
     socket.on("UserFindAndJoin", function (to, from, cb) {
-        console.log(User, Room);
+        //console.log(User,Room)
         var UserData = User.find(function (data) { return data.username == to; });
         var current = User.find(function (data) { return data.username == from; });
         if (to != from && UserData && !UserData.isJoin) {
@@ -63,14 +63,14 @@ io.on("connection", function (socket) {
         io.emit("UserRefuse", from);
     });
     socket.on("JoinRoom", function (roomId, name) {
-        console.log(name + " " + "Join");
+        //console.log(name+" "+"Join")
         socket.join(roomId);
     });
     socket.on("ScoreChanged", function (roomId, name, value) {
         socket.to(roomId).emit("UpdateScore", name, value);
     });
     socket.on("MathEnd", function (roomId, value) {
-        console.log(value);
+        //console.log(value)
         socket.to(roomId).emit("EnemyMathEnd", roomId, value);
     });
     socket.on("MathEndBoth", function (roomId, v1, v2) {
@@ -90,10 +90,10 @@ io.on("connection", function (socket) {
                 User.splice(index, 1);
             }
         });
-        // console.log('User)
+        // //console.log('User)
     });
 });
-var port = 3000;
+var port = process.env.PROT || 3000;
 server.listen(port, function () {
     console.log("Server app listening at http://localhost:" + port);
 });

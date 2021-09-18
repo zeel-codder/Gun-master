@@ -1,9 +1,4 @@
 
-const canvas: HTMLCanvasElement  = document.querySelector('#canvas');
-const btn: HTMLButtonElement = document.querySelector('#p')
-const btn_ans: HTMLButtonElement = document.querySelector('#p2')
-const shoot: HTMLAudioElement = document.querySelector('#Shoot')
-const tutorial: HTMLDivElement=document.querySelector('.center')
 // const Show_Score:HTMLDivElement=document.querySelector('.score')
 
 

@@ -117,7 +117,7 @@
     <canvas id="canvas"></canvas>
 
     <div class="line-draw">
-        <button>Point :<span id="p">0</span></span></button>
+        <button>You :<span id="p">0</span></span></button>
     </div>
     <div class="right none">
         <button><span id="Ename">zeel</span> :<span id="pe">0</span></span></button>
@@ -183,8 +183,8 @@
     let tem = "";
     let RoomId = "";
     let EnemyEndPoint=-1;
-
-    const Input_Name = document.getElementById("name")
+    
+    const Input_Name= document.getElementById("name")
     const Input_Name_p = document.getElementById("you")
     const Input_Enemy = document.getElementById("enemy")
     const Load = document.querySelector(".load")
@@ -194,27 +194,30 @@
     const Result = document.querySelector("#result")
     const EnemyBoxS = document.querySelector(".right")
     const WaitBox= document.querySelector(".Wait")
-
-
     const Tem_Input_Enemy = document.getElementById("EnemyName")
     const NameBox = document.querySelector('.name_container')
     const EnemyBox = document.querySelector('.enemy_container')
     const PlayBox = document.querySelector('.PlayBox')
     const Show_Score=document.querySelector('.score')
-
-
-
-
+    const canvas  = document.querySelector('#canvas');
+    const btn = document.querySelector('#p')
+    const btn_ans = document.querySelector('#p2')
+    const shoot= document.querySelector('#Shoot')
+    const tutorial=document.querySelector('.center')
+    
+    
+    
+    
     var socket = io("http://localhost:3000");
-
+    
     function FindThePlayer() {
-
+    
         if(!Show_Score.classList.contains('none')){
-
+    
             Show_Score.classList.add('none')
-
+    
         }
-
+    
         enemy = Input_Enemy.value;
         if (enemy == null) return;
         ToggleLoad()
@@ -223,176 +226,176 @@
             enemy,
             name,
             (type) => {
-
-                console.log(type)
-
+    
+                //console.log(type)
+    
                 ResponseEvent(type, () => {
-
+    
                     PlayBox.classList.add('none')
                     EnemyBox.classList.remove('none');
-
+    
                 })
-
-
+    
+    
             })
-
+    
     }
-
+    
     function AddUser() {
         name = Input_Name.value;
-        console.log(name)
+        //console.log(name)
         if (name == null) return;
         ToggleLoad()
         socket.emit('AddUser', name,
             (type) => {
-
+    
                 ResponseEvent(type, () => {
-
+    
                     Input_Name_p.innerHTML = "" + name;
                     NameBox.classList.add('none')
                     EnemyBox.classList.remove('none')
                 })
-
-
-
+    
+    
+    
             })
-
+    
     }
-
+    
     function ResponseEvent(type, callback) {
-
+    
         ToggleLoad();
-
+    
         if (!type) {
             callback()
         } else {
             display(type)
         }
-
+    
     }
-
+    
     function Accepted() {
         enemy = tem;
         socket.emit('ChallengeAccepted', name, enemy);
         PlayBox.classList.add('none');
-
+    
     }
-
+    
     function NotAccepted() {
-
+    
         PlayBox.classList.add('none')
         EnemyBox.classList.remove('none');
         socket.emit('ChallengeAcceptedNotExcepted', name, tem);
         tem = ""
-
+    
     }
-
+    
     socket.on("UserRefuse", (to) => {
-        console.log(to, 123)
+        //console.log(to, 123)
         if (to == name) {
-
+    
             ResponseEvent("User Not youWant to play With ", () => {
-
-
+    
+    
             })
-
+    
         }
     })
-
+    
     function ToggleLoad() {
         Load.classList.toggle('none')
     }
-
+    
     function display(data) {
         Message.innerHTML = "" + data;
         setTimeout(
-
+    
             () => Message.innerHTML = ""
             ,
             3000
         )
     }
-
+    
     function CallBack(type) {
-
+    
         ToggleLoad(type);
-
+    
     }
-
+    
     function SendMyScore(value) {
-        console.log('callsend')
-
+        //console.log('callsend')
+    
         socket.emit("ScoreChanged", RoomId, name, value)
-
+    
     }
-
+    
     function YourMathEnd(score) {
-        console.log('End')
-
+        //console.log('End')
+    
         ToggleLoad()
         WaitBox.classList.remove('none')
         
         socket.emit("MathEnd", RoomId,score);
     }
     socket.on("UpdateScore", (to, value) => {
-        console.log('callfind')
-
+        //console.log('callfind')
+    
         EnemyScore.innerHTML = "" + value
-
-
+    
+    
     });
-
-
-
+    
+    
+    
     socket.on('connect', (socket) => {
-        console.log('connected')
+        //console.log('connected')
     })
-
+    
     socket.on("UserNotFound", (User) => {
-        console.log(User)
+        //console.log(User)
     });
-
-
+    
+    
     socket.on('All', (to, form) => {
-
-
-        console.log(to, name, to == name)
+    
+    
+        //console.log(to, name, to == name)
         if (to == name) {
             tem = form;
-
+    
             Tem_Input_Enemy.innerHTML = "" + form;
             EnemyBox.classList.add('none')
             if(!Show_Score.classList.contains('none')){
-
+    
                 Show_Score.classList.add('none')
     
             }
             PlayBox.classList.remove('none')
-
-
+    
+    
         }
     });
-
-
-
-    socket.on("EnterRoom", (roomid, to, form) => {
-        RoomId = roomid;
-        console.log('room',to,form)
+    
+    
+    
+    socket.on("EnterRoom", (roomId, to, form) => {
+        RoomId = roomId;
+        //console.log('room',to,form)
         EnemyBox.classList.add("none")
         if (to == name || form == name) {
-
+    
             EnemyBoxS.classList.remove("none")
             EnemyName.innerHTML = "" + enemy;
             socket.emit('JoinRoom', RoomId,name)
             Start()
             if(!Load.classList.contains('none')){
                 Load.classList.add('none')
-
+    
             }
         }
-
+    
     })
-
+    
     function  ShowResult(score){
         if(EnemyEndPoint<=score){
             Result.innerHTML="You Win"
@@ -406,38 +409,50 @@
         if(!Load.classList.contains('none')){
             ToggleLoad();
         }
-
+    
         socket.emit("MathEndBoth",RoomId,score,EnemyEndPoint);
         socket.emit("Left-Room",RoomId,name);
         score=0;
         EnemyEndPoint=-1;
         SendMyScore(score)
     }
-
+    
     socket.on("YourEnd",(roomId,value,score)=>{
         EnemyEndPoint=value;
         ShowResult(score)
     })
-
+    
     socket.on("EnemyMathEnd",(roomId,value)=>{
         EnemyEndPoint=value;
     })
-
+    
     function Home(){
-
+    
         Show_Score.classList.add('none');
         EnemyBox.classList.remove('none');
+        EnemyEndPoint=-1;
+        score=0;
+        enemy = "";
+        tem = "";
+        RoomId = "";
+        EnemyEndPoint=-1;
+        EnemyBoxS.classList.add('none')
+        btn.innerHTML="0"
+    
+        
     }
-
-
+    
+    
     ToggleLoad()
+    
+    
 
 
 </script>
 <script>var exports = {};</script>
+<script type="text/javascript" src="/client/build/socket.js"></script>
 <script type="text/javascript" src="/client/build/Variable.js"></script>
 <script type="text/javascript" src="/client/build/index.js"></script>
-<script type="text/javascript" src="/client/build/socket.js"></script>
 
 
 

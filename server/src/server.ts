@@ -24,7 +24,7 @@ const Room :RoomSchema[]=[]
 
 const io = new Server(server,{
     cors: {
-      origin: 'http://127.0.0.1:5500',
+      origin: 'https://kind-chandrasekhar-2359ab.netlify.app/',
     }
   });
 
@@ -32,20 +32,20 @@ const io = new Server(server,{
 
 io.on("connection", (socket) => {
 
-    // console.log(socket.id)
+    // //console.log(socket.id)
 
 
     socket.on("AddUser",(id,fun)=>{
 
         const find:UserSchema=User.find((data)=>data.username ===id);
 
-        // console.log(find)
+        // //console.log(find)
        
         if(!find && User.length<100){
             User.push({username:id,isJoin:false,id:socket.id});
-            console.log(User)
+            //console.log(User)
             socket.emit("UserNotFound",true);
-            console.log(fun())
+            //console.log(fun())
             fun()
         }else{
             fun('User Found, Place try to User Another User Name')
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
 
     socket.on("UserFindAndJoin",(to,from,cb)=>{
 
-        console.log(User,Room)
+        //console.log(User,Room)
         const UserData:UserSchema= User.find((data)=>data.username==to)
         const current:UserSchema=User.find((data)=>data.username==from);
         
@@ -105,7 +105,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on("JoinRoom",(roomId,name)=>{
-        console.log(name+" "+"Join")
+        //console.log(name+" "+"Join")
         socket.join(roomId);
     })
 
@@ -116,7 +116,7 @@ io.on("connection", (socket) => {
 
 
     socket.on("MathEnd",(roomId,value)=>{
-        console.log(value)
+        //console.log(value)
         socket.to(roomId).emit("EnemyMathEnd",roomId,value);
     })
 
@@ -142,7 +142,7 @@ io.on("connection", (socket) => {
                     User.splice(index,1);
                 }
             })
-            // console.log('User)
+            // //console.log('User)
            
     });
 });
@@ -151,7 +151,7 @@ io.on("connection", (socket) => {
 
 
 
-const port=3000;
+const port=process.env.PROT ||3000;
 
 server.listen(port, () => {
   console.log(`Server app listening at http://localhost:${port}`)

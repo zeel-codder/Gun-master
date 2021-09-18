@@ -1,8 +1,3 @@
-var canvas = document.querySelector('#canvas');
-var btn = document.querySelector('#p');
-var btn_ans = document.querySelector('#p2');
-var shoot = document.querySelector('#Shoot');
-var tutorial = document.querySelector('.center');
 // const Show_Score:HTMLDivElement=document.querySelector('.score')
 var ctx = canvas.getContext('2d');
 //canvas dimensions
