@@ -9,7 +9,7 @@ A Multiplayer Shotting Game Build in Html5 canvas and Node js. A hero can shoot 
 
 
 
-#Game Look
+# Game Look
 ![Video](/media/video.gif)
 
 # Thank You
