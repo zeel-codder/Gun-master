@@ -13,15 +13,15 @@ interface UserSchema{
     isJoin:boolean;
 }
 
-interface RoomSchema{
-    id:string,
-    user1_id:string,
-    user2_id:string,
-    isAlive:boolean;
-}
+// interface RoomSchema{
+//     id:string,
+//     user1_id:string,
+//     user2_id:string,
+//     isAlive:boolean;
+// }
 
 const User :UserSchema[]=[]
-const Room :RoomSchema[]=[]
+// const Room :RoomSchema[]=[]
 
 const io = new Server(server,{
     cors: {
@@ -96,7 +96,7 @@ io.on("connection", (socket) => {
         // })
 
         UserData.isJoin=true;
-         current.isJoin=true;
+        current.isJoin=true;
 
         io.emit('EnterRoom',socket.id+"78",to,from);
     })
@@ -165,7 +165,7 @@ app.get('/',(req:Request,res:Response) => {
 // })
 
 
-const { PORT=3000, LOCAL_ADDRESS='0.0.0.0' } = process.env
+const { PORT=3000, LOCAL_ADDRESS='127.0.0.0' } = process.env
 server.listen(PORT, LOCAL_ADDRESS, () => {
   const address = server.address();
   console.log('server listening at', address);

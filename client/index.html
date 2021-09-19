@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bomb</title>
+    <title>Gun master</title>
 </head>
 
 <style>
@@ -50,14 +50,18 @@
         padding: 2.5rem;
         font-weight: border;
         border-radius: 12px;
+     
 
 
     }
 
     .center * {
         width: 100%;
-        margin: .3rem;
+        margin: .3rem 0;
         font-weight: bolder;
+    }
+    #Player{
+        text-align: center;
     }
 
     .line-draw>button,
@@ -75,6 +79,7 @@
         font-size: 1.5rem;
         margin: .3rem;
         border-radius: 3px;
+        width:100%;
 
     }
 
@@ -85,6 +90,9 @@
     .red {
         text-align: center;
         color: red;
+    }
+    .tutorial *{
+        margin:.3rem 0;
     }
 
 
@@ -98,7 +106,8 @@
     }
 
     input {
-        padding: .3rem 0;
+        font-size: 1.5rem;
+        padding: .3rem;
     }
 
     .load {
@@ -110,6 +119,7 @@
         top: 0%;
         right: 0% !important;
     }
+
 </style>
 
 <body>
@@ -129,41 +139,55 @@
 
         <div class="tutorial none">
             <h1>Tutorial</h1>
-            <p>Move the Hero (˂ and ˃ )</p>
-            <p>Fire (Click on the enemy or ˄ )</p>
-            <button onclick="Start()">Start</button>
+            <h3>🤙 How To Play</h3>
+            <h3>🏹 For DeskTop</h3>
+            <h4>👉 Move the Hero (⏪ and ⏩ )</h4>
+            <h4>👉 Fire (Click on the enemy or ⏫ )</h4>
+            <h3>🏹 For Mobile</h3>
+            <h4>👉 Move the Hero (⏪ and ⏩ )</h4>
+            <h4>👉 Fire (Click on the enemy )</h4>
+            <h2>🤙 Mode Of Game</h2>
+            <h4>👉 Guest Mode</h4>
+            <h4>👉 Multiplayer Mode</h4>
+        
+            <button onclick="ToggleTutorial()">Back</button>
         </div>
 
         <div class="main name_container">
-
-            <h1>Enter Name</h1>
+            
+            <h1>Enter Name Hero Name</h1>
             <input id="name">
-            <button onclick="AddUser()">Find</button>
+            <button onclick="AddUser()">Enter</button>
+            <button onclick="ToggleTutorial()">Tutorial</button>
+            <button onclick="StartGuest()">Play As Guest</button>
         </div>
 
         <div class="main PlayBox none">
+            
             <h1>
                 <span id="EnemyName"></span>,
-                Challengeds You
+                Challenged You
             </h1>
-
-
+            
+            
             <button onclick="Accepted()">Play With Him</button>
             <button onclick="NotAccepted()">Back</button>
         </div>
-
-
-
+        
+        
+        
         <div class="main none enemy_container">
+            <p>Active: 🟢 <span id="total"></span></p>
             <p id="you"></p>
-
+            
             <h1>Enter Name To Find</h1>
             <input id="enemy">
             <button onclick="FindThePlayer()">Find</button>
         </div>
-
+        
         <div class="score none">
             <h1 id="result" class="red"></h1>
+            <p id="Player"></p>
             <h1>Your Score</h1>
             <h2 id="p2">0</h2>
             <button onclick="Home()">Home</button>
@@ -176,284 +200,8 @@
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
-<script>
-
-    let name = "";
-    let enemy = "";
-    let tem = "";
-    let RoomId = "";
-    let EnemyEndPoint=-1;
-    
-    const Input_Name= document.getElementById("name")
-    const Input_Name_p = document.getElementById("you")
-    const Input_Enemy = document.getElementById("enemy")
-    const Load = document.querySelector(".load")
-    const Message = document.querySelector(".red")
-    const EnemyName = document.querySelector("#Ename")
-    const EnemyScore = document.querySelector("#pe")
-    const Result = document.querySelector("#result")
-    const EnemyBoxS = document.querySelector(".right")
-    const WaitBox= document.querySelector(".Wait")
-    const Tem_Input_Enemy = document.getElementById("EnemyName")
-    const NameBox = document.querySelector('.name_container')
-    const EnemyBox = document.querySelector('.enemy_container')
-    const PlayBox = document.querySelector('.PlayBox')
-    const Show_Score=document.querySelector('.score')
-    const canvas  = document.querySelector('#canvas');
-    const btn = document.querySelector('#p')
-    const btn_ans = document.querySelector('#p2')
-    const shoot= document.querySelector('#Shoot')
-    const tutorial=document.querySelector('.center')
-    
-    
-    
-    
-    var socket = io("https://gameshoot123.herokuapp.com");
-    function FindThePlayer() {
-    
-        if(!Show_Score.classList.contains('none')){
-    
-            Show_Score.classList.add('none')
-    
-        }
-    
-        enemy = Input_Enemy.value;
-        if (enemy == null) return;
-        ToggleLoad()
-        socket.emit(
-            "UserFindAndJoin",
-            enemy,
-            name,
-            (type) => {
-    
-                //console.log(type)
-    
-                ResponseEvent(type, () => {
-    
-                    PlayBox.classList.add('none')
-                    EnemyBox.classList.remove('none');
-    
-                })
-    
-    
-            })
-    
-    }
-    
-    function AddUser() {
-        name = Input_Name.value;
-        //console.log(name)
-        if (name == null) return;
-        ToggleLoad()
-        socket.emit('AddUser', name,
-            (type) => {
-    
-                ResponseEvent(type, () => {
-    
-                    Input_Name_p.innerHTML = "" + name;
-                    NameBox.classList.add('none')
-                    EnemyBox.classList.remove('none')
-                })
-    
-    
-    
-            })
-    
-    }
-    
-    function ResponseEvent(type, callback) {
-    
-        ToggleLoad();
-    
-        if (!type) {
-            callback()
-        } else {
-            display(type)
-        }
-    
-    }
-    
-    function Accepted() {
-        enemy = tem;
-        socket.emit('ChallengeAccepted', name, enemy);
-        PlayBox.classList.add('none');
-    
-    }
-    
-    function NotAccepted() {
-    
-        PlayBox.classList.add('none')
-        EnemyBox.classList.remove('none');
-        socket.emit('ChallengeAcceptedNotExcepted', name, tem);
-        tem = ""
-    
-    }
-    
-    socket.on("UserRefuse", (to) => {
-        //console.log(to, 123)
-        if (to == name) {
-    
-            ResponseEvent("User Not youWant to play With ", () => {
-    
-    
-            })
-    
-        }
-    })
-    
-    function ToggleLoad() {
-        Load.classList.toggle('none')
-    }
-    
-    function display(data) {
-        Message.innerHTML = "" + data;
-        setTimeout(
-    
-            () => Message.innerHTML = ""
-            ,
-            3000
-        )
-    }
-    
-    function CallBack(type) {
-    
-        ToggleLoad(type);
-    
-    }
-    
-    function SendMyScore(value) {
-        //console.log('callsend')
-    
-        socket.emit("ScoreChanged", RoomId, name, value)
-    
-    }
-    
-    function YourMathEnd(score) {
-        //console.log('End')
-    
-        ToggleLoad()
-        WaitBox.classList.remove('none')
-        
-        socket.emit("MathEnd", RoomId,score);
-    }
-    socket.on("UpdateScore", (to, value) => {
-        //console.log('callfind')
-    
-        EnemyScore.innerHTML = "" + value
-    
-    
-    });
-    
-    
-    
-    socket.on('connect', (socket) => {
-        //console.log('connected')
-    })
-    
-    socket.on("UserNotFound", (User) => {
-        //console.log(User)
-    });
-    
-    
-    socket.on('All', (to, form) => {
-    
-    
-        //console.log(to, name, to == name)
-        if (to == name) {
-            tem = form;
-    
-            Tem_Input_Enemy.innerHTML = "" + form;
-            EnemyBox.classList.add('none')
-            if(!Show_Score.classList.contains('none')){
-    
-                Show_Score.classList.add('none')
-    
-            }
-            PlayBox.classList.remove('none')
-    
-    
-        }
-    });
-    
-    
-    
-    socket.on("EnterRoom", (roomId, to, form) => {
-        RoomId = roomId;
-        //console.log('room',to,form)
-        EnemyBox.classList.add("none")
-        if (to == name || form == name) {
-    
-            EnemyBoxS.classList.remove("none")
-            EnemyName.innerHTML = "" + enemy;
-            socket.emit('JoinRoom', RoomId,name)
-            Start()
-            if(!Load.classList.contains('none')){
-                Load.classList.add('none')
-    
-            }
-        }
-    
-    })
-    
-    function  ShowResult(score){
-        if(EnemyEndPoint<=score){
-            Result.innerHTML="You Win"
-        }else{
-            Result.innerHTML="You Loss"
-        }
-        if(!WaitBox.classList.contains('none')){
-            WaitBox.classList.add('none')
-        }
-        Show_Score.classList.remove('none')
-        if(!Load.classList.contains('none')){
-            ToggleLoad();
-        }
-    
-        socket.emit("MathEndBoth",RoomId,score,EnemyEndPoint);
-        socket.emit("Left-Room",RoomId,name);
-        score=0;
-        EnemyEndPoint=-1;
-        SendMyScore(score)
-    }
-    
-    socket.on("YourEnd",(roomId,value,score)=>{
-        EnemyEndPoint=value;
-        ShowResult(score)
-    })
-    
-    socket.on("EnemyMathEnd",(roomId,value)=>{
-        EnemyEndPoint=value;
-    })
-    
-    function Home(){
-    
-        Show_Score.classList.add('none');
-        EnemyBox.classList.remove('none');
-        EnemyEndPoint=-1;
-        score=0;
-        enemy = "";
-        tem = "";
-        RoomId = "";
-        EnemyEndPoint=-1;
-        EnemyBoxS.classList.add('none')
-        btn.innerHTML="0"
-    
-        
-    }
-    
-    
-    ToggleLoad()
-    
-    
-
-
-</script>
 <script>var exports = {};</script>
-<script type="text/javascript" src="/build/socket.js"></script>
 <script type="text/javascript" src="/build/Variable.js"></script>
+<script type="text/javascript" src="/build/socket.js"></script>
 <script type="text/javascript" src="/build/index.js"></script>
-
-
-
-
 </html>

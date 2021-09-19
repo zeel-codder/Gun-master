@@ -120,10 +120,12 @@ function animate() {
                         if (e.radius - 10 > 10) {
                             score = score + Math.floor(e.radius) - 10;
                             btn.innerHTML = "" + score;
-                            SendMyScore(score);
-                            if (EnemyEndPoint != -1 && EnemyEndPoint < score) {
-                                ReSet();
-                                ShowResult(score);
+                            if (!GestsPlay) {
+                                SendMyScore(score);
+                                if (EnemyEndPoint != -1 && EnemyEndPoint < score) {
+                                    ReSet();
+                                    ShowResult(score);
+                                }
                             }
                             for (var i = 0; i < Math.random() * (e.radius + 10); i++) {
                                 Particals.push(new SmallPoint(e.x, e.y, 5 * Math.random(), e.color, {
@@ -136,7 +138,9 @@ function animate() {
                         else {
                             score = score + Math.floor(e.radius);
                             btn.innerHTML = "" + score;
-                            SendMyScore(score);
+                            if (!GestsPlay) {
+                                SendMyScore(score);
+                            }
                             Enemys.splice(index1, 1);
                         }
                     });
@@ -146,9 +150,11 @@ function animate() {
             if (diff < 1) {
                 setTimeout(function () {
                     if (start) {
-                        YourMathEnd(score);
-                        if (EnemyEndPoint != -1) {
-                            ShowResult(score);
+                        if (!GestsPlay) {
+                            YourMathEnd(score);
+                            if (EnemyEndPoint != -1) {
+                                ShowResult(score);
+                            }
                         }
                         ReSet();
                     }
@@ -166,12 +172,12 @@ function animate() {
 }
 function Start() {
     // for make the gun shot
-    if (!tutorial.classList.contains('none')) {
-        tutorial.classList.add('none');
+    if (!BoxMain.classList.contains('none')) {
+        BoxMain.classList.add('none');
     }
-    if (!Show_Score.classList.contains('none')) {
-        Show_Score.classList.add('none');
-    }
+    // if(! Show_Score.classList.contains('none')){
+    //     Show_Score.classList.add('none')
+    // }
     shoot.loop = true;
     shoot.play();
     // window.addEventListener('ArrowLeft', AddPointUp);
@@ -238,8 +244,14 @@ function Start() {
 }
 function ReSet() {
     btn_ans.innerHTML = "" + score;
-    tutorial.classList.remove("none");
-    if (WaitBox.classList.contains("none")) {
+    BoxMain.classList.remove("none");
+    if (!GestsPlay) {
+        if (WaitBox.classList.contains("none")) {
+            Show_Score.classList.remove('none');
+        }
+    }
+    else {
+        NameBox.classList.add('none');
         Show_Score.classList.remove('none');
     }
     cancelAnimationFrame(animateId);
@@ -256,4 +268,8 @@ function ReSet() {
     clearInterval(enemy_loop);
     // person = new Player(p_x, height, 30, 'blue');
     start = false;
+}
+function StartGuest() {
+    GestsPlay = true;
+    Start();
 }

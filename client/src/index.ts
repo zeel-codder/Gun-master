@@ -179,10 +179,13 @@ function animate(): void {
 
                             score=score+Math.floor(e.radius)-10;
                             btn.innerHTML = "" + score;
-                            SendMyScore(score);
-                            if(EnemyEndPoint!=-1 && EnemyEndPoint<score){
-                                ReSet()
-                                ShowResult(score);
+                            if(!GestsPlay){
+
+                                SendMyScore(score);
+                                if(EnemyEndPoint!=-1 && EnemyEndPoint<score){
+                                    ReSet()
+                                    ShowResult(score);
+                                }
                             }
 
                             for (let i = 0; i < Math.random() * (e.radius + 10); i++) {
@@ -209,7 +212,10 @@ function animate(): void {
 
                         score=score+Math.floor(e.radius);
                         btn.innerHTML = "" + score;
-                        SendMyScore(score)
+
+                        if(!GestsPlay){
+                            SendMyScore(score)
+                        }
 
                             Enemys.splice(index1, 1);
                         }
@@ -225,11 +231,15 @@ function animate(): void {
             if (diff < 1) {
                 setTimeout(() => {
                     if(start){
-                        YourMathEnd(score)
-                        if(EnemyEndPoint!=-1){
 
-                            ShowResult(score)
+                        if(!GestsPlay){
 
+                            YourMathEnd(score)
+                            if(EnemyEndPoint!=-1){
+                                
+                                ShowResult(score)
+                                
+                            }
                         }
                         ReSet();
 
@@ -260,16 +270,16 @@ function animate(): void {
 function Start(): void {
     // for make the gun shot
 
-    if(!tutorial.classList.contains('none')){
+    if(!BoxMain.classList.contains('none')){
 
-        tutorial.classList.add('none')
+        BoxMain.classList.add('none')
     }
 
-    if(! Show_Score.classList.contains('none')){
+    // if(! Show_Score.classList.contains('none')){
 
-        Show_Score.classList.add('none')
+    //     Show_Score.classList.add('none')
 
-    }
+    // }
 
 
     shoot.loop = true;
@@ -373,8 +383,13 @@ function Start(): void {
 
 function ReSet(): void {
     btn_ans.innerHTML=""+score;
-    tutorial.classList.remove("none")
-    if(WaitBox.classList.contains("none")){
+    BoxMain.classList.remove("none")
+    if(!GestsPlay){
+        if(WaitBox.classList.contains("none")){
+            Show_Score.classList.remove('none')
+        }
+    }else{
+        NameBox.classList.add('none')
         Show_Score.classList.remove('none')
     }
     cancelAnimationFrame(animateId)
@@ -391,6 +406,12 @@ function ReSet(): void {
     clearInterval(enemy_loop)
     // person = new Player(p_x, height, 30, 'blue');
     start = false;
+}
+
+
+function StartGuest(){
+    GestsPlay=true;
+    Start();
 }
 
 
