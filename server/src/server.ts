@@ -51,6 +51,7 @@ io.on("connection", (socket) => {
             socket.emit("UserNotFound",true);
             //console.log(fun())
             fun()
+            io.emit("TotalPlayerChange",User.length)
         }else{
             fun('User Found, Place try to User Another User Name')
             return true;
@@ -147,6 +148,7 @@ io.on("connection", (socket) => {
                 }
             })
             // //console.log('User)
+            io.emit("TotalPlayerChange",User.length)
            
     });
 });
@@ -158,18 +160,18 @@ app.get('/',(req:Request,res:Response) => {
 })
 
 
-// const port=process.env.PROT || 3000;
+const port=process.env.PROT || 3000;
 
-// server.listen(port, () => {
-//   console.log(`Server app listening at http://localhost:${port}`)
-// })
+server.listen(port, () => {
+  console.log(`Server app listening at http://localhost:${port}`)
+})
 
 
-const { PORT=3000, LOCAL_ADDRESS='0.0.0.0' } = process.env
-server.listen(PORT, LOCAL_ADDRESS, () => {
-  const address = server.address();
-  console.log('server listening at', address);
-});
+// const { PORT=3000, LOCAL_ADDRESS='0.0.0.0' } = process.env
+// server.listen(PORT, LOCAL_ADDRESS, () => {
+//   const address = server.address();
+//   console.log('server listening at', address);
+// });
 
 
 

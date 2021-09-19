@@ -27,8 +27,8 @@ var BoxMain = document.querySelector('.center');
 var Tutorial = document.querySelector('.tutorial');
 var MyNameResult = document.querySelector('#Player');
 var NumberOfPlayers = document.querySelector("#total");
-// var socket = io("http://localhost:3000/");
-var socket = io("https://gameshoot123.herokuapp.com");
+var socket = io("http://localhost:3000/");
+// var socket = io("https://gameshoot123.herokuapp.com");
 socket.on("UserRefuse", function (to) {
     //console.log(to, 123)
     if (to == you) {

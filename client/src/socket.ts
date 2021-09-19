@@ -34,8 +34,8 @@ const NumberOfPlayers:HTMLParagraphElement=document.querySelector("#total");
 
 
 
-// var socket = io("http://localhost:3000/");
-var socket = io("https://gameshoot123.herokuapp.com");
+var socket = io("http://localhost:3000/");
+// var socket = io("https://gameshoot123.herokuapp.com");
 
 
 socket.on("UserRefuse", (to:string) => {
