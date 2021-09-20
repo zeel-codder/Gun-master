@@ -105,6 +105,13 @@ function animate() {
             ProjectPoints.splice(index, 1);
         }
     });
+    if (!GestsPlay) {
+        SendMyScore(score);
+        if (EnemyEndPoint != -1 && EnemyEndPoint < score) {
+            ReSet();
+            ShowResult(score);
+        }
+    }
     Enemys.forEach(function (e, index1) {
         e.update();
         var isOut = e.y - e.radius > height;
@@ -172,6 +179,7 @@ function animate() {
 }
 function Start() {
     // for make the gun shot
+    start = true;
     if (!BoxMain.classList.contains('none')) {
         BoxMain.classList.add('none');
     }

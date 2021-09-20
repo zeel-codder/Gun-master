@@ -65,7 +65,10 @@ io.on("connection", function (socket) {
         // })
         UserData.isJoin = true;
         current.isJoin = true;
-        io.emit('EnterRoom', socket.id + "78", to, from);
+        var roomId = socket.id + "78";
+        UserData.roomId = roomId;
+        current.roomId = roomId;
+        io.emit('EnterRoom', roomId, to, from);
     });
     socket.on("ChallengeAcceptedNotExcepted", function (to, from) {
         var UserData = User.find(function (data) { return data.username == to; });
@@ -91,12 +94,17 @@ io.on("connection", function (socket) {
         User.forEach(function (data, index) {
             if (data.username == v1) {
                 data.isJoin = false;
+                data.roomId = "";
             }
         });
     });
     socket.on("disconnect", function () {
         User.forEach(function (data, index) {
             if (data.id == socket.id) {
+                console.log(data);
+                if (data.isJoin) {
+                    socket.to(data.roomId).emit("EnemyMathEnd", data.roomId, -3);
+                }
                 User.splice(index, 1);
             }
         });
@@ -107,12 +115,16 @@ io.on("connection", function (socket) {
 app.get('/', function (req, res) {
     res.send("Running");
 });
-// const port=process.env.PROT || 3000;
-// server.listen(port, () => {
-//   console.log(`Server app listening at http://localhost:${port}`)
-// })
-var _a = process.env, _b = _a.PORT, PORT = _b === void 0 ? 3000 : _b, _c = _a.LOCAL_ADDRESS, LOCAL_ADDRESS = _c === void 0 ? '0.0.0.0' : _c;
-server.listen(PORT, LOCAL_ADDRESS, function () {
-    var address = server.address();
-    console.log('server listening at', address);
-});
+if (process.env.NODE_ENV === 'production') {
+    var _a = process.env, _b = _a.PORT, PORT = _b === void 0 ? 3000 : _b, _c = _a.LOCAL_ADDRESS, LOCAL_ADDRESS = _c === void 0 ? '0.0.0.0' : _c;
+    server.listen(PORT, LOCAL_ADDRESS, function () {
+        var address = server.address();
+        console.log('server listening at', address);
+    });
+}
+else {
+    var port_1 = process.env.PROT || 3000;
+    server.listen(port_1, function () {
+        console.log("Server app listening at http://localhost:" + port_1);
+    });
+}

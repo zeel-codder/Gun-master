@@ -11,6 +11,7 @@ interface UserSchema{
     id:string,
     username: string;
     isJoin:boolean;
+    roomId?:string;
 }
 
 // interface RoomSchema{
@@ -39,7 +40,7 @@ io.on("connection", (socket) => {
     // //console.log(socket.id)
 
 
-    socket.on("AddUser",(id,fun)=>{
+    socket.on("AddUser",(id :string,fun :Function)=>{
 
         const find:UserSchema=User.find((data)=>data.username ===id);
 
@@ -67,7 +68,7 @@ io.on("connection", (socket) => {
     })
 
 
-    socket.on("UserFindAndJoin",(to,from,cb)=>{
+    socket.on("UserFindAndJoin",(to:string,from:string,cb:Function)=>{
 
         //console.log(User,Room)
         const UserData:UserSchema= User.find((data)=>data.username==to)
@@ -76,14 +77,12 @@ io.on("connection", (socket) => {
         if(to!=from && UserData && !UserData.isJoin){
             io.emit('All',to,from);   
         }else{
-
             cb("User you Look For is Not Exits")
-
         }
     });
 
       
-    socket.on("ChallengeAccepted",(to,from)=>{
+    socket.on("ChallengeAccepted",(to:string,from:string)=>{
 
         const UserData:UserSchema= User.find((data)=>data.username==to)
         const current:UserSchema=User.find((data)=>data.username==from);
@@ -99,43 +98,52 @@ io.on("connection", (socket) => {
         UserData.isJoin=true;
         current.isJoin=true;
 
-        io.emit('EnterRoom',socket.id+"78",to,from);
+        const roomId:string=socket.id+"78";
+
+        UserData.roomId=roomId;
+        current.roomId=roomId;
+
+        io.emit('EnterRoom',roomId,to,from);
     })
  
 
-    socket.on("ChallengeAcceptedNotExcepted",(to,from)=>{
+    socket.on("ChallengeAcceptedNotExcepted",(to:string,from:string)=>{
         const UserData:UserSchema= User.find((data)=>data.username==to)
         const current:UserSchema=User.find((data)=>data.username==from);
         io.emit("UserRefuse",from);
     })
 
-    socket.on("JoinRoom",(roomId,name)=>{
+    socket.on("JoinRoom",(roomId:string,name:string)=>{
         //console.log(name+" "+"Join")
         socket.join(roomId);
     })
 
-    socket.on("ScoreChanged",(roomId,name,value)=>{
+    socket.on("ScoreChanged",(roomId:string,name:string,value:number)=>{
 
         socket.to(roomId).emit("UpdateScore",name,value);
     })
 
 
-    socket.on("MathEnd",(roomId,value)=>{
+    socket.on("MathEnd",(roomId:string,value:number)=>{
         //console.log(value)
         socket.to(roomId).emit("EnemyMathEnd",roomId,value);
     })
 
-    socket.on("MathEndBoth",(roomId,v1,v2)=>{
+    
+    socket.on("MathEndBoth",(roomId:string,v1:number,v2:number)=>{
         socket.to(roomId).emit("YourEnd",roomId,v1,v2);
     })
 
-    socket.on("Left-Room",(roomId,v1)=>{
+
+
+    socket.on("Left-Room",(roomId:string,v1:string)=>{
 
         socket.leave(roomId);
 
         User.forEach((data,index)=>{
             if(data.username==v1){
                 data.isJoin=false;
+                data.roomId="";
             }
         })
     })
@@ -144,6 +152,10 @@ io.on("connection", (socket) => {
         
             User.forEach((data,index)=>{
                 if(data.id==socket.id){
+                    console.log(data)
+                    if(data.isJoin){
+                        socket.to(data.roomId).emit("EnemyMathEnd",data.roomId,-3);
+                    }
                     User.splice(index,1);
                 }
             })
@@ -160,18 +172,25 @@ app.get('/',(req:Request,res:Response) => {
 })
 
 
-// const port=process.env.PROT || 3000;
+if(process.env.NODE_ENV === 'production'){
+    const { PORT=3000, LOCAL_ADDRESS='0.0.0.0' } = process.env
+    server.listen(PORT, LOCAL_ADDRESS, () => {
+      const address = server.address();
+      console.log('server listening at', address);
+    });
+}else{
 
-// server.listen(port, () => {
-//   console.log(`Server app listening at http://localhost:${port}`)
-// })
+    
+    
+    const port=process.env.PROT || 3000;
+    
+    server.listen(port, () => {
+        console.log(`Server app listening at http://localhost:${port}`)
+    })
+}
 
 
-const { PORT=3000, LOCAL_ADDRESS='0.0.0.0' } = process.env
-server.listen(PORT, LOCAL_ADDRESS, () => {
-  const address = server.address();
-  console.log('server listening at', address);
-});
+
 
 
 

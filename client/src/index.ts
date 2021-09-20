@@ -127,6 +127,7 @@ function AddPointUp(event: KeyboardEvent) {
 function animate(): void {
 
     // console.log(ProjectPoints)
+    
     animateId=requestAnimationFrame(animate);
 
     ctx.fillStyle = "rgba(0,0,0,0.4)"
@@ -150,6 +151,15 @@ function animate(): void {
         }
     })
 
+    if(!GestsPlay){
+
+        SendMyScore(score);
+        if(EnemyEndPoint!=-1 && EnemyEndPoint<score){
+            ReSet()
+            ShowResult(score);
+        }
+    }
+
     Enemys.forEach((e, index1) => {
         e.update()
 
@@ -158,11 +168,9 @@ function animate(): void {
         const isOut: boolean = e.y - e.radius > height;
 
         if (isOut) {
-          
+  
                 Enemys.splice(index1, 1);
-           
-
-
+        
         } else {
 
             ProjectPoints.forEach((point, index2) => {
@@ -269,6 +277,8 @@ function animate(): void {
 
 function Start(): void {
     // for make the gun shot
+
+    start=true;
 
     if(!BoxMain.classList.contains('none')){
 

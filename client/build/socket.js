@@ -58,11 +58,11 @@ socket.on("EnterRoom", function (roomId, to, form) {
     if (to == you || form == you) {
         EnemyBoxS.classList.remove("none");
         EnemyName.innerHTML = "" + enemy;
+        if (Load.classList.contains('none')) {
+            Load.classList.remove('none');
+        }
         socket.emit('JoinRoom', RoomId, you);
         Start();
-        if (!Load.classList.contains('none')) {
-            Load.classList.add('none');
-        }
     }
 });
 socket.on('TotalPlayerChange', function (total) {
@@ -74,6 +74,7 @@ socket.on("YourEnd", function (roomId, value, score) {
 });
 socket.on("EnemyMathEnd", function (roomId, value) {
     EnemyEndPoint = value;
+    console.log(score, EnemyEndPoint);
     if (score > EnemyEndPoint) {
         ShowResult(score);
     }
@@ -82,15 +83,16 @@ function Home() {
     if (GestsPlay) {
         Show_Score.classList.add('none');
         NameBox.classList.remove('none');
+        btn.innerHTML = "0";
+        score = 0;
     }
     else {
         Show_Score.classList.add('none');
         EnemyBox.classList.remove('none');
         EnemyBoxS.classList.add('none');
         btn.innerHTML = "0";
-        btn.innerHTML = "0";
-        EnemyEndPoint = -1;
         score = 0;
+        EnemyEndPoint = -1;
         enemy = "";
         tem = "";
         RoomId = "";
@@ -99,11 +101,17 @@ function Home() {
     GestsPlay = false;
 }
 function ShowResult(score) {
-    if (EnemyEndPoint <= score) {
+    if (!Load.classList.contains('none')) {
+        Load.classList.add('none');
+    }
+    if (EnemyEndPoint < score) {
         Result.innerHTML = "You Win";
     }
-    else {
+    else if (EnemyEndPoint > score) {
         Result.innerHTML = "You Loss";
+    }
+    else {
+        Result.innerHTML = "Match Draw";
     }
     if (!WaitBox.classList.contains('none')) {
         WaitBox.classList.add('none');
@@ -122,7 +130,7 @@ function SendMyScore(value) {
     socket.emit("ScoreChanged", RoomId, you, value);
 }
 function YourMathEnd(score) {
-    //console.log('End')
+    // console.log('End')
     ToggleLoad();
     WaitBox.classList.remove('none');
     socket.emit("MathEnd", RoomId, score);
@@ -198,5 +206,8 @@ function NotAccepted() {
 function ToggleTutorial() {
     NameBox.classList.toggle('none');
     Tutorial.classList.toggle('none');
+}
+function Reload() {
+    window.location.reload();
 }
 ToggleLoad();
