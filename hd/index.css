@@ -1,0 +1,58 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    overflow: hidden;
+    cursor: pointer;
+    background-color: black;
+}
+
+#canvas {
+    background-color: black
+}
+
+.center {
+    display: flex;
+    background-color: transparent;
+    position: fixed;
+    z-index: 12;
+    left: 50%;
+    top: 50%;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    flex-direction: column;
+    width: fit-content;
+    padding: 2.5rem;
+    font-weight: border;
+    border-radius: 12px;
+    line-height: 2rem;
+}
+.none{
+    display: none;
+}
+
+h1{
+    color: red;
+    padding: 1.3rem;
+
+}
+
+
+
+@keyframes loop {
+    0%{
+        transform: scale(0);
+    }100%{
+        transform: scale(1);
+    }
+    
+}
+h3,a{
+    color: white;
+    text-decoration: none;
+}

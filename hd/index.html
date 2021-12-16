@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Diwali</title>
+</head>
+<link rel="stylesheet" href="index.css">
+<body>
+
+    <canvas id="canvas"></canvas>
+    <div class="center">
+        <h1>🪔 Happy Diwali 🪔</h1>
+        <h3>- <a href="https://zeelcodder.tech/">👨‍💻 From Zeel Prajapati</a></h3>
+        <h3 id="t" ><a onclick="Play()">👨 Play Music</a></h3>
+        <audio id="zeel" src="audio.mp3"  loop></audio>
+    </div>
+    
+</body>
+<script>
+    function Play(){
+        document.querySelector("#zeel").play();
+        document.querySelector("#t").classList.add('none');
+    }
+</script>
+<script src="index.js"></script>
+</html>
