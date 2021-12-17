@@ -4,31 +4,9 @@ var tem = "";
 var RoomId = "";
 var EnemyEndPoint = -1;
 var GestsPlay = false;
-var Input_Name = document.querySelector("#name");
-var Input_Name_p = document.querySelector("#you");
-var Input_Enemy = document.querySelector("#enemy");
-var Load = document.querySelector(".load");
-var Message = document.querySelector(".red");
-var EnemyName = document.querySelector("#Ename");
-var EnemyScore = document.querySelector("#pe");
-var Result = document.querySelector("#result");
-var EnemyBoxS = document.querySelector(".right");
-var WaitBox = document.querySelector(".Wait");
-var Tem_Input_Enemy = document.querySelector("#EnemyName");
-var NameBox = document.querySelector('.name_container');
-var EnemyBox = document.querySelector('.enemy_container');
-var PlayBox = document.querySelector('.PlayBox');
-var Show_Score = document.querySelector('.score');
-var canvas = document.querySelector('#canvas');
-var btn = document.querySelector('#p');
-var btn_ans = document.querySelector('#p2');
-var shoot = document.querySelector('#Shoot');
-var BoxMain = document.querySelector('.center');
-var Tutorial = document.querySelector('.tutorial');
-var MyNameResult = document.querySelector('#Player');
-var NumberOfPlayers = document.querySelector("#total");
-// var socket = io("http://localhost:3000/");
-var socket = io("https://gameshoot123.herokuapp.com");
+var dom = new Document_Control();
+var socket = io("http://localhost:3000/");
+// var socket = io("https://gameshoot123.herokuapp.com");
 socket.on("UserRefuse", function (to) {
     //console.log(to, 123)
     if (to == you) {
@@ -37,36 +15,36 @@ socket.on("UserRefuse", function (to) {
 });
 socket.on("UpdateScore", function (to, value) {
     //console.log('callfind')
-    EnemyScore.innerHTML = "" + value;
+    dom.setEnemyScore(value);
 });
 socket.on('All', function (to, form) {
     //console.log(to, name, to == name)
     if (to == you) {
         tem = form;
-        Tem_Input_Enemy.innerHTML = "" + form;
-        EnemyBox.classList.add('none');
-        if (!Show_Score.classList.contains('none')) {
-            Show_Score.classList.add('none');
+        dom.setEnemyName(form);
+        dom.removeEnemyBox();
+        if (!dom.isShowScoreDisplay()) {
+            dom.removeShow_Score();
         }
-        PlayBox.classList.remove('none');
+        dom.showPlayBox();
     }
 });
 socket.on("EnterRoom", function (roomId, to, form) {
     RoomId = roomId;
     // console.log('room',to,form)
-    EnemyBox.classList.add("none");
+    dom.removeEnemyBox();
     if (to == you || form == you) {
-        EnemyBoxS.classList.remove("none");
-        EnemyName.innerHTML = "" + enemy;
-        if (Load.classList.contains('none')) {
-            Load.classList.remove('none');
+        dom.showEnemyScoreBox();
+        dom.setEnemyScoreName(enemy);
+        if (!dom.isLoadDisplay()) {
+            dom.removeLoad();
         }
         socket.emit('JoinRoom', RoomId, you);
         Start();
     }
 });
 socket.on('TotalPlayerChange', function (total) {
-    NumberOfPlayers.innerHTML = "" + total;
+    dom.setNumberOfPlayer(total);
 });
 socket.on("YourEnd", function (roomId, value, score) {
     EnemyEndPoint = value;
@@ -81,16 +59,11 @@ socket.on("EnemyMathEnd", function (roomId, value) {
 });
 function Home() {
     if (GestsPlay) {
-        Show_Score.classList.add('none');
-        NameBox.classList.remove('none');
-        btn.innerHTML = "0";
+        dom.startGestsGame();
         score = 0;
     }
     else {
-        Show_Score.classList.add('none');
-        EnemyBox.classList.remove('none');
-        EnemyBoxS.classList.add('none');
-        btn.innerHTML = "0";
+        dom.startMutGame();
         score = 0;
         EnemyEndPoint = -1;
         enemy = "";
@@ -101,26 +74,29 @@ function Home() {
     GestsPlay = false;
 }
 function ShowResult(score) {
-    if (!Load.classList.contains('none')) {
-        Load.classList.add('none');
+    if (dom.isPlayBoxDisplay()) {
+        dom.removePlayBox();
+    }
+    if (dom.isLoadDisplay()) {
+        dom.removeLoad();
     }
     if (EnemyEndPoint < score) {
-        Result.innerHTML = "You Win";
+        dom.setResult("You Win");
     }
     else if (EnemyEndPoint > score) {
-        Result.innerHTML = "You Loss";
+        dom.setResult("You Loss");
     }
     else {
-        Result.innerHTML = "Match Draw";
+        dom.setResult("Match Draw");
     }
-    if (!WaitBox.classList.contains('none')) {
-        WaitBox.classList.add('none');
+    if (dom.isWaitBoxDisplay()) {
+        dom.removeWaitBox();
     }
-    Show_Score.classList.remove('none');
-    if (!Load.classList.contains('none')) {
-        ToggleLoad();
+    dom.showShow_Score();
+    if (dom.isLoadDisplay()) {
+        dom.ToggleLoad();
     }
-    MyNameResult.innerHTML = you + " " + "vs" + " " + enemy;
+    dom.setMyResult(you, enemy);
     socket.emit("MathEndBoth", RoomId, score, EnemyEndPoint);
     socket.emit("Left-Room", RoomId, you);
     SendMyScore(score);
@@ -131,12 +107,9 @@ function SendMyScore(value) {
 }
 function YourMathEnd(score) {
     // console.log('End')
-    ToggleLoad();
-    WaitBox.classList.remove('none');
+    dom.ToggleLoad();
+    dom.showWaitBox();
     socket.emit("MathEnd", RoomId, score);
-}
-function ToggleLoad() {
-    Load.classList.toggle('none');
 }
 function display(data) {
     Message.innerHTML = "" + data;
@@ -148,20 +121,20 @@ function FindThePlayer() {
     tem = "";
     RoomId = "";
     EnemyEndPoint = -1;
-    btn.innerHTML = "0";
-    EnemyScore.innerHTML = "0";
-    if (!Show_Score.classList.contains('none')) {
-        Show_Score.classList.add('none');
+    dom.setMyScore(0);
+    dom.setEnemyScore(0);
+    if (dom.isShowScoreDisplay()) {
+        dom.removeShow_Score();
     }
     enemy = Input_Enemy.value;
     if (enemy == null || enemy.length == 0)
         return;
-    ToggleLoad();
+    dom.ToggleLoad();
     socket.emit("UserFindAndJoin", enemy, you, function (type) {
         //console.log(type)
         ResponseEvent(type, function () {
-            PlayBox.classList.add('none');
-            EnemyBox.classList.remove('none');
+            dom.removePlayBox();
+            dom.showEnemyBox();
         });
     });
 }
@@ -170,17 +143,17 @@ function AddUser() {
     //console.log(name)
     if (you == null || you.length == 0)
         return;
-    ToggleLoad();
+    dom.ToggleLoad();
     socket.emit('AddUser', you, function (type) {
         ResponseEvent(type, function () {
             Input_Name_p.innerHTML = "" + you;
-            NameBox.classList.add('none');
-            EnemyBox.classList.remove('none');
+            dom.removeNameBox();
+            dom.showEnemyBox();
         });
     });
 }
 function ResponseEvent(type, callback) {
-    ToggleLoad();
+    dom.ToggleLoad();
     if (!type) {
         callback();
     }
@@ -192,14 +165,14 @@ function Accepted() {
     enemy = tem;
     score = 0;
     EnemyEndPoint = -1;
-    btn.innerHTML = "0";
-    EnemyScore.innerHTML = "0";
+    dom.setMyScore(0);
+    dom.setEnemyScore(0);
     socket.emit('ChallengeAccepted', you, enemy);
-    PlayBox.classList.add('none');
+    dom.showPlayBox();
 }
 function NotAccepted() {
-    PlayBox.classList.add('none');
-    EnemyBox.classList.remove('none');
+    dom.removePlayBox();
+    dom.showEnemyBox();
     socket.emit('ChallengeAcceptedNotExcepted', you, tem);
     tem = "";
 }
@@ -210,4 +183,4 @@ function ToggleTutorial() {
 function Reload() {
     window.location.reload();
 }
-ToggleLoad();
+dom.ToggleLoad();

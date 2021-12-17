@@ -254,13 +254,13 @@ function ReSet() {
     btn_ans.innerHTML = "" + score;
     BoxMain.classList.remove("none");
     if (!GestsPlay) {
-        if (WaitBox.classList.contains("none")) {
-            Show_Score.classList.remove('none');
+        if (dom.isWaitBoxDisplay()) {
+            dom.showShow_Score();
         }
     }
     else {
-        NameBox.classList.add('none');
-        Show_Score.classList.remove('none');
+        dom.removeNameBox();
+        dom.showShow_Score();
     }
     cancelAnimationFrame(animateId);
     Enemys = [];

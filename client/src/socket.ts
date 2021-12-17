@@ -5,37 +5,16 @@ let RoomId: string = "";
 let EnemyEndPoint: number = -1;
 let GestsPlay: boolean = false;
 
-const Input_Name: HTMLInputElement = document.querySelector("#name")
-const Input_Name_p: HTMLParagraphElement = document.querySelector("#you")
-const Input_Enemy: HTMLInputElement = document.querySelector("#enemy")
-const Load: HTMLImageElement = document.querySelector(".load")
-const Message: HTMLParagraphElement = document.querySelector(".red")
-const EnemyName: HTMLSpanElement = document.querySelector("#Ename")
-const EnemyScore: HTMLSpanElement = document.querySelector("#pe")
-const Result: HTMLHeadingElement = document.querySelector("#result")
-const EnemyBoxS: HTMLDivElement = document.querySelector(".right")
-const WaitBox: HTMLDivElement = document.querySelector(".Wait")
-const Tem_Input_Enemy: HTMLInputElement = document.querySelector("#EnemyName")
-const NameBox: HTMLDivElement = document.querySelector('.name_container')
-const EnemyBox: HTMLDivElement = document.querySelector('.enemy_container')
-const PlayBox: HTMLDivElement = document.querySelector('.PlayBox')
-const Show_Score: HTMLDivElement = document.querySelector('.score')
-const canvas: HTMLCanvasElement = document.querySelector('#canvas');
-const btn: HTMLSpanElement = document.querySelector('#p')
-const btn_ans: HTMLHeadingElement = document.querySelector('#p2')
-const shoot: HTMLAudioElement = document.querySelector('#Shoot')
-const BoxMain: HTMLDivElement = document.querySelector('.center')
-const Tutorial: HTMLDivElement = document.querySelector('.tutorial')
-const MyNameResult: HTMLParagraphElement = document.querySelector('#Player')
-const NumberOfPlayers: HTMLParagraphElement = document.querySelector("#total");
+
+const dom=new Document_Control();
 
 
 
 
 
 
-// var socket = io("http://localhost:3000/");
-var socket = io("https://gameshoot123.herokuapp.com");
+var socket = io("http://localhost:3000/");
+// var socket = io("https://gameshoot123.herokuapp.com");
 
 
 socket.on("UserRefuse", (to: string) => {
@@ -49,7 +28,7 @@ socket.on("UserRefuse", (to: string) => {
 
 socket.on("UpdateScore", (to: string, value: number) => {
     //console.log('callfind')
-    EnemyScore.innerHTML = "" + value
+    dom.setEnemyScore(value)
 });
 
 
@@ -61,14 +40,12 @@ socket.on('All', (to: string, form: string) => {
     if (to == you) {
         tem = form;
 
-        Tem_Input_Enemy.innerHTML = "" + form;
-        EnemyBox.classList.add('none')
-        if (!Show_Score.classList.contains('none')) {
-
-            Show_Score.classList.add('none')
-
+        dom.setEnemyName(form);
+        dom.removeEnemyBox();
+        if (!dom.isShowScoreDisplay()) {
+            dom.removeShow_Score()
         }
-        PlayBox.classList.remove('none')
+        dom.showPlayBox()
     }
 });
 
@@ -77,12 +54,12 @@ socket.on('All', (to: string, form: string) => {
 socket.on("EnterRoom", (roomId: string, to: string, form: string) => {
     RoomId = roomId;
     // console.log('room',to,form)
-    EnemyBox.classList.add("none")
+    dom.removeEnemyBox();
     if (to == you || form == you) {
-        EnemyBoxS.classList.remove("none")
-        EnemyName.innerHTML = "" + enemy;
-        if (Load.classList.contains('none')) {
-            Load.classList.remove('none')
+        dom.showEnemyScoreBox()
+        dom.setEnemyScoreName(enemy);
+        if (!dom.isLoadDisplay()) {
+            dom.removeLoad()
         }
         socket.emit('JoinRoom', RoomId, you)
         Start()
@@ -93,7 +70,8 @@ socket.on("EnterRoom", (roomId: string, to: string, form: string) => {
 
 socket.on('TotalPlayerChange', (total: number) => {
 
-    NumberOfPlayers.innerHTML = "" + total;
+
+    dom.setNumberOfPlayer(total);
 
 })
 
@@ -115,15 +93,10 @@ socket.on("EnemyMathEnd", (roomId: string, value: number) => {
 function Home() {
 
     if (GestsPlay) {
-        Show_Score.classList.add('none');
-        NameBox.classList.remove('none');
-        btn.innerHTML = "0";
+        dom.startGestsGame();
         score = 0;
     } else {
-        Show_Score.classList.add('none');
-        EnemyBox.classList.remove('none');
-        EnemyBoxS.classList.add('none')
-        btn.innerHTML = "0";
+        dom.startMutGame();
         score = 0;
         EnemyEndPoint = -1;
         enemy = "";
@@ -138,24 +111,31 @@ function Home() {
 
 
 function ShowResult(score: number) {
-    if (! Load.classList.contains('none')) {
-        Load.classList.add('none')
+    if (dom.isPlayBoxDisplay()){
+
+        dom.removePlayBox()
+
+    }
+    if (dom.isLoadDisplay()) {
+        dom.removeLoad()
     }
     if (EnemyEndPoint < score) {
-        Result.innerHTML = "You Win"
+        dom.setResult("You Win")
     } else if (EnemyEndPoint > score) {
-        Result.innerHTML = "You Loss"
+        dom.setResult("You Loss")
     } else {
-        Result.innerHTML = "Match Draw"
+        dom.setResult("Match Draw")
     }
-    if (!WaitBox.classList.contains('none')) {
-        WaitBox.classList.add('none')
+    if (dom.isWaitBoxDisplay()) {
+        dom.removeWaitBox();
     }
-    Show_Score.classList.remove('none')
-    if (!Load.classList.contains('none')) {
-        ToggleLoad();
+    dom.showShow_Score()
+    if (dom.isLoadDisplay()) {
+        dom.ToggleLoad();
     }
-    MyNameResult.innerHTML = you + " " + "vs" + " " + enemy;
+
+    dom.setMyResult(you,enemy);
+    
     socket.emit("MathEndBoth", RoomId, score, EnemyEndPoint);
     socket.emit("Left-Room", RoomId, you);
     SendMyScore(score)
@@ -171,8 +151,8 @@ function SendMyScore(value: number) {
 function YourMathEnd(score: number) {
     // console.log('End')
 
-    ToggleLoad()
-    WaitBox.classList.remove('none')
+    dom.ToggleLoad()
+    dom.showWaitBox()
 
     socket.emit("MathEnd", RoomId, score);
 
@@ -180,9 +160,6 @@ function YourMathEnd(score: number) {
 }
 
 
-function ToggleLoad() {
-    Load.classList.toggle('none')
-}
 
 function display(data: string) {
     Message.innerHTML = "" + data;
@@ -201,18 +178,18 @@ function FindThePlayer() {
     tem = "";
     RoomId = "";
     EnemyEndPoint = -1;
-    btn.innerHTML = "0";
-    EnemyScore.innerHTML = "0";
+    dom.setMyScore(0);
+   dom.setEnemyScore(0);
 
-    if (!Show_Score.classList.contains('none')) {
+    if (dom.isShowScoreDisplay()) {
 
-        Show_Score.classList.add('none')
+        dom.removeShow_Score();
 
     }
 
     enemy = Input_Enemy.value;
     if (enemy == null || enemy.length == 0) return;
-    ToggleLoad()
+    dom.ToggleLoad()
     socket.emit(
         "UserFindAndJoin",
         enemy,
@@ -223,8 +200,9 @@ function FindThePlayer() {
 
             ResponseEvent(type, () => {
 
-                PlayBox.classList.add('none')
-                EnemyBox.classList.remove('none');
+                dom.removePlayBox();
+                
+                dom.showEnemyBox();
 
             })
 
@@ -237,22 +215,24 @@ function AddUser() {
     you = Input_Name.value;
     //console.log(name)
     if (you == null || you.length == 0) return;
-    ToggleLoad()
+    dom.ToggleLoad()
     socket.emit('AddUser', you,
         (type: string) => {
 
             ResponseEvent(type, () => {
 
                 Input_Name_p.innerHTML = "" + you;
-                NameBox.classList.add('none')
-                EnemyBox.classList.remove('none')
+
+                dom.removeNameBox()
+                dom.showEnemyBox();
+                
             })
         })
 }
 
 function ResponseEvent(type: string, callback: Function) {
 
-    ToggleLoad();
+    dom.ToggleLoad();
 
     if (!type) {
         callback()
@@ -266,22 +246,21 @@ function Accepted() {
     enemy = tem;
     score = 0;
     EnemyEndPoint = -1;
-    btn.innerHTML = "0";
-    EnemyScore.innerHTML = "0";
+    dom.setMyScore(0);
+    dom.setEnemyScore(0);
     socket.emit('ChallengeAccepted', you, enemy);
-    PlayBox.classList.add('none');
+    dom.showPlayBox();
 
 }
 
 function NotAccepted() {
 
-    PlayBox.classList.add('none')
-    EnemyBox.classList.remove('none');
+    dom.removePlayBox()
+    dom.showEnemyBox()
     socket.emit('ChallengeAcceptedNotExcepted', you, tem);
     tem = ""
 
 }
-
 
 
 function ToggleTutorial() {
@@ -290,8 +269,12 @@ function ToggleTutorial() {
 }
 
 
+
+
+
+
 function Reload(){
     window.location.reload();
 }
 
-ToggleLoad()
+dom.ToggleLoad()
