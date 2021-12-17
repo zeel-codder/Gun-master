@@ -5,8 +5,8 @@ var RoomId = "";
 var EnemyEndPoint = -1;
 var GestsPlay = false;
 var dom = new Document_Control();
-var socket = io("http://localhost:3000/");
-// var socket = io("https://gameshoot123.herokuapp.com");
+// var socket = io("http://localhost:3000/");
+var socket = io("https://gameshoot123.herokuapp.com");
 socket.on("UserRefuse", function (to) {
     //console.log(to, 123)
     if (to == you) {
