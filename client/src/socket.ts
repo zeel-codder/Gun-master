@@ -6,7 +6,7 @@ let EnemyEndPoint: number = -1;
 let GestsPlay: boolean = false;
 
 
-const dom=new Document_Control();
+const dom = new Document_Control();
 
 
 
@@ -36,7 +36,7 @@ socket.on("UpdateScore", (to: string, value: number) => {
 
 socket.on('All', (to: string, form: string) => {
 
-    //console.log(to, name, to == name)
+    console.log(to, you, to == you)
     if (to == you) {
         tem = form;
 
@@ -46,6 +46,14 @@ socket.on('All', (to: string, form: string) => {
             dom.removeShow_Score()
         }
         dom.showPlayBox()
+
+        setTimeout(() => {
+
+            if (enemy != form) {
+                NotAccepted();
+            }
+
+        }, 10000)
     }
 });
 
@@ -54,16 +62,16 @@ socket.on('All', (to: string, form: string) => {
 socket.on("EnterRoom", (roomId: string, to: string, form: string) => {
     RoomId = roomId;
     // console.log('room',to,form)
-    dom.removeEnemyBox();
     if (to == you || form == you) {
+        dom.removeEnemyBox();
         dom.showEnemyScoreBox()
         dom.setEnemyScoreName(enemy);
-        if (!dom.isLoadDisplay()) {
+        if (dom.isLoadDisplay()) {
             dom.removeLoad()
         }
         socket.emit('JoinRoom', RoomId, you)
         Start()
-        
+
     }
 })
 
@@ -84,13 +92,20 @@ socket.on("YourEnd", (roomId: string, value: number, score: number) => {
 
 socket.on("EnemyMathEnd", (roomId: string, value: number) => {
     EnemyEndPoint = value;
-    console.log(score,EnemyEndPoint)
+    console.log(score, EnemyEndPoint)
     if (score > EnemyEndPoint) {
-        ShowResult(score);
+        socket.emit("MathEndBoth", roomId, score, EnemyEndPoint);
+        // ShowResult(score);
+    }else{
+        if(dom.isShowScoreDisplay()){
+           dom.removeShow_Score()
+        }
+        dom.showWaitBox()
     }
 })
 
 function Home() {
+    dom.playGunShoot()
 
     if (GestsPlay) {
         dom.startGestsGame();
@@ -105,17 +120,20 @@ function Home() {
         EnemyEndPoint = -1;
     }
     GestsPlay = false;
+    dom.setInput_Enemy('')
 
 
 }
 
 
 function ShowResult(score: number) {
-    if (dom.isPlayBoxDisplay()){
+    if (dom.isPlayBoxDisplay()) {
 
         dom.removePlayBox()
 
     }
+
+
     if (dom.isLoadDisplay()) {
         dom.removeLoad()
     }
@@ -134,8 +152,8 @@ function ShowResult(score: number) {
         dom.ToggleLoad();
     }
 
-    dom.setMyResult(you,enemy);
-    
+    dom.setMyResult(you, enemy);
+
     socket.emit("MathEndBoth", RoomId, score, EnemyEndPoint);
     socket.emit("Left-Room", RoomId, you);
     SendMyScore(score)
@@ -152,7 +170,9 @@ function YourMathEnd(score: number) {
     // console.log('End')
 
     dom.ToggleLoad()
+    dom.removeShow_Score()
     dom.showWaitBox()
+
 
     socket.emit("MathEnd", RoomId, score);
 
@@ -179,7 +199,8 @@ function FindThePlayer() {
     RoomId = "";
     EnemyEndPoint = -1;
     dom.setMyScore(0);
-   dom.setEnemyScore(0);
+    dom.setEnemyScore(0);
+    dom.playGunShoot()
 
     if (dom.isShowScoreDisplay()) {
 
@@ -201,7 +222,7 @@ function FindThePlayer() {
             ResponseEvent(type, () => {
 
                 dom.removePlayBox();
-                
+
                 dom.showEnemyBox();
 
             })
@@ -213,6 +234,7 @@ function FindThePlayer() {
 
 function AddUser() {
     you = Input_Name.value;
+    dom.playGunShoot()
     //console.log(name)
     if (you == null || you.length == 0) return;
     dom.ToggleLoad()
@@ -225,7 +247,7 @@ function AddUser() {
 
                 dom.removeNameBox()
                 dom.showEnemyBox();
-                
+
             })
         })
 }
@@ -249,8 +271,12 @@ function Accepted() {
     dom.setMyScore(0);
     dom.setEnemyScore(0);
     socket.emit('ChallengeAccepted', you, enemy);
-    dom.showPlayBox();
-
+    dom.removePlayBox();
+    dom.setInput_Enemy('')
+    dom.playGunShoot()
+    if (!dom.isLoadDisplay()) {
+        dom.showLoad()
+    }
 }
 
 function NotAccepted() {
@@ -259,6 +285,8 @@ function NotAccepted() {
     dom.showEnemyBox()
     socket.emit('ChallengeAcceptedNotExcepted', you, tem);
     tem = ""
+    dom.setInput_Enemy('')
+    dom.playGunShoot()
 
 }
 
@@ -266,6 +294,7 @@ function NotAccepted() {
 function ToggleTutorial() {
     NameBox.classList.toggle('none')
     Tutorial.classList.toggle('none')
+    dom.playGunShoot()
 }
 
 
@@ -273,7 +302,8 @@ function ToggleTutorial() {
 
 
 
-function Reload(){
+ function Reload() {
+    dom.playGunShoot()
     window.location.reload();
 }
 

@@ -91,8 +91,14 @@ function AddPointUp(event) {
 function animate() {
     // console.log(ProjectPoints)
     animateId = requestAnimationFrame(animate);
+    var link = 'https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dW5pdmVyc2V8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60';
     ctx.fillStyle = "rgba(0,0,0,0.4)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    var background = new Image();
+    background.src = link;
+    background.onload = function () {
+        ctx.drawImage(background, 0, 0, width, height);
+    };
     person.draw();
     ProjectPoints.forEach(function (point, index) {
         point.update();
@@ -124,6 +130,7 @@ function animate() {
                 if (diff < 1) {
                     setTimeout(function () {
                         ProjectPoints.splice(index2, 1);
+                        dom.playGunHit();
                         if (e.radius - 10 > 10) {
                             score = score + Math.floor(e.radius) - 10;
                             btn.innerHTML = "" + score;
@@ -217,7 +224,7 @@ function Start() {
                 y: 1,
                 x: 0
             };
-            if (Math.random() < .5) {
+            if (Math.random() < .3) {
                 var x1 = person.x - x;
                 var y1 = person.y - y;
                 var angle = Math.atan2(y1, x1);
@@ -226,19 +233,19 @@ function Start() {
             }
             var factor = Math.random() < 0.1
                 ?
-                    score > 50
+                    score > 500
                         ?
-                            score > 100 ?
+                            score > 1000 ?
                                 5
                                 :
                                     3
                         :
-                            score > 100 ?
+                            score > 1000 ?
                                 4
                                 :
                                     2
                 :
-                    Math.random() < 0.5
+                    Math.random() < 0.2
                         ?
                             2
                         :
@@ -254,9 +261,6 @@ function ReSet() {
     btn_ans.innerHTML = "" + score;
     BoxMain.classList.remove("none");
     if (!GestsPlay) {
-        if (dom.isWaitBoxDisplay()) {
-            dom.showShow_Score();
-        }
     }
     else {
         dom.removeNameBox();
@@ -280,4 +284,5 @@ function ReSet() {
 function StartGuest() {
     GestsPlay = true;
     Start();
+    dom.playGunShoot();
 }

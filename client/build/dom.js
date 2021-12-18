@@ -16,7 +16,9 @@ var Show_Score = document.querySelector('.score');
 var canvas = document.querySelector('#canvas');
 var btn = document.querySelector('#p');
 var btn_ans = document.querySelector('#p2');
-var shoot = document.querySelector('#Shoot');
+var shoot = document.querySelector('#bg');
+var shoot_gun = document.querySelector('#Shoot');
+var gun_hit = document.querySelector('#gun');
 var BoxMain = document.querySelector('.center');
 var Tutorial = document.querySelector('.tutorial');
 var MyNameResult = document.querySelector('#Player');
@@ -37,8 +39,12 @@ var Document_Control = /** @class */ (function () {
     Document_Control.prototype.setEnemyName = function (name) {
         Tem_Input_Enemy.innerHTML = "" + name;
     };
+    Document_Control.prototype.setInput_Enemy = function (name) {
+        Input_Enemy.value = name;
+    };
     Document_Control.prototype.removeEnemyBox = function () {
         EnemyBox.classList.add('none');
+        console.log(new Error().stack);
     };
     Document_Control.prototype.showEnemyBox = function () {
         EnemyBox.classList.remove('none');
@@ -63,9 +69,16 @@ var Document_Control = /** @class */ (function () {
     //ScoreBox
     Document_Control.prototype.removeShow_Score = function () {
         Show_Score.classList.add('none');
+        // console.log('call remove')
+        // console.trace()
+        // console.log(new Error().stack);
     };
     Document_Control.prototype.showShow_Score = function () {
         Show_Score.classList.remove('none');
+        console.log('call show');
+        // console.trace()
+        // console.log(new Error().stack);
+        // throw('Error')
     };
     Document_Control.prototype.isShowScoreDisplay = function () {
         return !Show_Score.classList.contains('none');
@@ -109,9 +122,11 @@ var Document_Control = /** @class */ (function () {
     };
     Document_Control.prototype.showLoad = function () {
         Load.classList.remove('none');
+        console.log(new Error().stack);
     };
     Document_Control.prototype.removeLoad = function () {
         Load.classList.add('none');
+        console.log(new Error().stack);
     };
     //Game
     Document_Control.prototype.startGestsGame = function () {
@@ -128,6 +143,17 @@ var Document_Control = /** @class */ (function () {
     };
     Document_Control.prototype.ToggleLoad = function () {
         Load.classList.toggle('none');
+        // console.log()
+        console.log(new Error().stack);
+    };
+    //music
+    Document_Control.prototype.playGunShoot = function () {
+        shoot_gun.currentTime = 0;
+        shoot_gun.play();
+    };
+    Document_Control.prototype.playGunHit = function () {
+        gun_hit.currentTime = 0;
+        gun_hit.play();
     };
     return Document_Control;
 }());

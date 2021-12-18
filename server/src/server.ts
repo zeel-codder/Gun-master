@@ -54,18 +54,12 @@ io.on("connection", (socket) => {
             fun()
             io.emit("TotalPlayerChange",User.length)
         }else{
-            fun('User Found, Place try to User Another User Name')
+            fun('User found, place try with another username')
             return true;
         }
     })
 
 
-    socket.on("FindUser",(id)=>{
-
-
-
-
-    })
 
 
     socket.on("UserFindAndJoin",(to:string,from:string,cb:Function)=>{
@@ -77,7 +71,7 @@ io.on("connection", (socket) => {
         if(to!=from && UserData && !UserData.isJoin){
             io.emit('All',to,from);   
         }else{
-            cb("User you Look For is Not Exits")
+            cb("User is not exits or playing with onther user")
         }
     });
 

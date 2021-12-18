@@ -16,7 +16,9 @@ const Show_Score: HTMLDivElement = document.querySelector('.score')
 const canvas: HTMLCanvasElement = document.querySelector('#canvas');
 const btn: HTMLSpanElement = document.querySelector('#p')
 const btn_ans: HTMLHeadingElement = document.querySelector('#p2')
-const shoot: HTMLAudioElement = document.querySelector('#Shoot')
+const shoot: HTMLAudioElement = document.querySelector('#bg')
+const shoot_gun: HTMLAudioElement = document.querySelector('#Shoot')
+const gun_hit: HTMLAudioElement = document.querySelector('#gun')
 const BoxMain: HTMLDivElement = document.querySelector('.center')
 const Tutorial: HTMLDivElement = document.querySelector('.tutorial')
 const MyNameResult: HTMLParagraphElement = document.querySelector('#Player')
@@ -41,8 +43,13 @@ class Document_Control{
         Tem_Input_Enemy.innerHTML = "" + name;
     }
 
+    setInput_Enemy(name:string){
+        Input_Enemy.value=name;
+    }
+
     removeEnemyBox(){
         EnemyBox.classList.add('none')
+        console.log(new Error().stack);
     }
 
     showEnemyBox(){
@@ -76,11 +83,25 @@ class Document_Control{
 
     //ScoreBox
     removeShow_Score(){
-        Show_Score.classList.add('none')
-    }
 
+        
+        Show_Score.classList.add('none')
+
+        // console.log('call remove')
+        // console.trace()
+        // console.log(new Error().stack);
+
+
+    }
+    
     showShow_Score(){
         Show_Score.classList.remove('none')
+        console.log('call show')
+        // console.trace()
+        // console.log(new Error().stack);
+
+
+        // throw('Error')
     }
     isShowScoreDisplay(){
         return !Show_Score.classList.contains('none');
@@ -139,10 +160,14 @@ class Document_Control{
 
     showLoad(){
         Load.classList.remove('none');
+        console.log(new Error().stack);
+
     }
 
     removeLoad(){
         Load.classList.add('none');
+        console.log(new Error().stack);
+
     }
 
     //Game
@@ -166,7 +191,22 @@ class Document_Control{
 
     ToggleLoad() {
         Load.classList.toggle('none')
+        // console.log()
+        console.log(new Error ().stack);
+
     }
 
+    //music
 
+    playGunShoot()
+    {
+        shoot_gun.currentTime=0
+        shoot_gun.play()
+    }
+
+    playGunHit()
+    {
+        gun_hit.currentTime=0
+        gun_hit.play()
+    }
 }

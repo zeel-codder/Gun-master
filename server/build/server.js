@@ -36,11 +36,9 @@ io.on("connection", function (socket) {
             io.emit("TotalPlayerChange", User.length);
         }
         else {
-            fun('User Found, Place try to User Another User Name');
+            fun('User found, place try with another username');
             return true;
         }
-    });
-    socket.on("FindUser", function (id) {
     });
     socket.on("UserFindAndJoin", function (to, from, cb) {
         //console.log(User,Room)
@@ -50,7 +48,7 @@ io.on("connection", function (socket) {
             io.emit('All', to, from);
         }
         else {
-            cb("User you Look For is Not Exits");
+            cb("User is not exits or playing with onther user");
         }
     });
     socket.on("ChallengeAccepted", function (to, from) {

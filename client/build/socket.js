@@ -18,7 +18,7 @@ socket.on("UpdateScore", function (to, value) {
     dom.setEnemyScore(value);
 });
 socket.on('All', function (to, form) {
-    //console.log(to, name, to == name)
+    console.log(to, you, to == you);
     if (to == you) {
         tem = form;
         dom.setEnemyName(form);
@@ -27,16 +27,21 @@ socket.on('All', function (to, form) {
             dom.removeShow_Score();
         }
         dom.showPlayBox();
+        setTimeout(function () {
+            if (enemy != form) {
+                NotAccepted();
+            }
+        }, 10000);
     }
 });
 socket.on("EnterRoom", function (roomId, to, form) {
     RoomId = roomId;
     // console.log('room',to,form)
-    dom.removeEnemyBox();
     if (to == you || form == you) {
+        dom.removeEnemyBox();
         dom.showEnemyScoreBox();
         dom.setEnemyScoreName(enemy);
-        if (!dom.isLoadDisplay()) {
+        if (dom.isLoadDisplay()) {
             dom.removeLoad();
         }
         socket.emit('JoinRoom', RoomId, you);
@@ -54,10 +59,18 @@ socket.on("EnemyMathEnd", function (roomId, value) {
     EnemyEndPoint = value;
     console.log(score, EnemyEndPoint);
     if (score > EnemyEndPoint) {
-        ShowResult(score);
+        socket.emit("MathEndBoth", roomId, score, EnemyEndPoint);
+        // ShowResult(score);
+    }
+    else {
+        if (dom.isShowScoreDisplay()) {
+            dom.removeShow_Score();
+        }
+        dom.showWaitBox();
     }
 });
 function Home() {
+    dom.playGunShoot();
     if (GestsPlay) {
         dom.startGestsGame();
         score = 0;
@@ -72,6 +85,7 @@ function Home() {
         EnemyEndPoint = -1;
     }
     GestsPlay = false;
+    dom.setInput_Enemy('');
 }
 function ShowResult(score) {
     if (dom.isPlayBoxDisplay()) {
@@ -108,6 +122,7 @@ function SendMyScore(value) {
 function YourMathEnd(score) {
     // console.log('End')
     dom.ToggleLoad();
+    dom.removeShow_Score();
     dom.showWaitBox();
     socket.emit("MathEnd", RoomId, score);
 }
@@ -123,6 +138,7 @@ function FindThePlayer() {
     EnemyEndPoint = -1;
     dom.setMyScore(0);
     dom.setEnemyScore(0);
+    dom.playGunShoot();
     if (dom.isShowScoreDisplay()) {
         dom.removeShow_Score();
     }
@@ -140,6 +156,7 @@ function FindThePlayer() {
 }
 function AddUser() {
     you = Input_Name.value;
+    dom.playGunShoot();
     //console.log(name)
     if (you == null || you.length == 0)
         return;
@@ -168,19 +185,28 @@ function Accepted() {
     dom.setMyScore(0);
     dom.setEnemyScore(0);
     socket.emit('ChallengeAccepted', you, enemy);
-    dom.showPlayBox();
+    dom.removePlayBox();
+    dom.setInput_Enemy('');
+    dom.playGunShoot();
+    if (!dom.isLoadDisplay()) {
+        dom.showLoad();
+    }
 }
 function NotAccepted() {
     dom.removePlayBox();
     dom.showEnemyBox();
     socket.emit('ChallengeAcceptedNotExcepted', you, tem);
     tem = "";
+    dom.setInput_Enemy('');
+    dom.playGunShoot();
 }
 function ToggleTutorial() {
     NameBox.classList.toggle('none');
     Tutorial.classList.toggle('none');
+    dom.playGunShoot();
 }
 function Reload() {
+    dom.playGunShoot();
     window.location.reload();
 }
 dom.ToggleLoad();

@@ -2,7 +2,7 @@
 // const Show_Score:HTMLDivElement=document.querySelector('.score')
 
 
-const ctx:any = canvas.getContext('2d');
+const ctx: any = canvas.getContext('2d');
 
 
 //canvas dimensions
@@ -12,7 +12,7 @@ canvas.width = width;
 canvas.height = height
 const p_x: number = width / 2;
 const p_y: number = height; let score: number = 0;
-let animateId:number =0;
+let animateId: number = 0;
 
 
 
@@ -127,11 +127,25 @@ function AddPointUp(event: KeyboardEvent) {
 function animate(): void {
 
     // console.log(ProjectPoints)
-    
-    animateId=requestAnimationFrame(animate);
+
+    animateId = requestAnimationFrame(animate);
+
+    const link: string = 'https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dW5pdmVyc2V8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60'
+
+
+
 
     ctx.fillStyle = "rgba(0,0,0,0.4)"
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    var background = new Image();
+    background.src = link;
+
+  
+    background.onload = function () {
+        ctx.drawImage(background, 0, 0,width,height);
+        
+    }
 
 
     person.draw();
@@ -145,16 +159,16 @@ function animate(): void {
             point.y + point.radius < 0
 
         if (isOut) {
-           
-                ProjectPoints.splice(index, 1);
-         
+
+            ProjectPoints.splice(index, 1);
+
         }
     })
 
-    if(!GestsPlay){
+    if (!GestsPlay) {
 
         SendMyScore(score);
-        if(EnemyEndPoint!=-1 && EnemyEndPoint<score){
+        if (EnemyEndPoint != -1 && EnemyEndPoint < score) {
             ReSet()
             ShowResult(score);
         }
@@ -168,9 +182,9 @@ function animate(): void {
         const isOut: boolean = e.y - e.radius > height;
 
         if (isOut) {
-  
-                Enemys.splice(index1, 1);
-        
+
+            Enemys.splice(index1, 1);
+
         } else {
 
             ProjectPoints.forEach((point, index2) => {
@@ -183,14 +197,16 @@ function animate(): void {
 
                         ProjectPoints.splice(index2, 1);
 
+                        dom.playGunHit()
+
                         if (e.radius - 10 > 10) {
 
-                            score=score+Math.floor(e.radius)-10;
+                            score = score + Math.floor(e.radius) - 10;
                             btn.innerHTML = "" + score;
-                            if(!GestsPlay){
+                            if (!GestsPlay) {
 
                                 SendMyScore(score);
-                                if(EnemyEndPoint!=-1 && EnemyEndPoint<score){
+                                if (EnemyEndPoint != -1 && EnemyEndPoint < score) {
                                     ReSet()
                                     ShowResult(score);
                                 }
@@ -218,12 +234,12 @@ function animate(): void {
                             e.radius -= 10;
                         } else {
 
-                        score=score+Math.floor(e.radius);
-                        btn.innerHTML = "" + score;
+                            score = score + Math.floor(e.radius);
+                            btn.innerHTML = "" + score;
 
-                        if(!GestsPlay){
-                            SendMyScore(score)
-                        }
+                            if (!GestsPlay) {
+                                SendMyScore(score)
+                            }
 
                             Enemys.splice(index1, 1);
                         }
@@ -238,15 +254,15 @@ function animate(): void {
 
             if (diff < 1) {
                 setTimeout(() => {
-                    if(start){
+                    if (start) {
 
-                        if(!GestsPlay){
+                        if (!GestsPlay) {
 
                             YourMathEnd(score)
-                            if(EnemyEndPoint!=-1){
-                                
+                            if (EnemyEndPoint != -1) {
+
                                 ShowResult(score)
-                                
+
                             }
                         }
                         ReSet();
@@ -278,9 +294,9 @@ function animate(): void {
 function Start(): void {
     // for make the gun shot
 
-    start=true;
+    start = true;
 
-    if(!BoxMain.classList.contains('none')){
+    if (!BoxMain.classList.contains('none')) {
 
         BoxMain.classList.add('none')
     }
@@ -304,85 +320,85 @@ function Start(): void {
 
     enemy_loop = setInterval(() => {
 
-        let max:number =score/1000+1;
-        
-
-
-        for(let i=0;i<max;i++){
-
-        
-
-        const radius: number = Math.random() * (40 - 10) + 10;
-
-        const index: number = Math.floor(Math.random() * color.length);
-        // const color
-
-        let x: number;
-        let y: number;
-
-
-        const po: number = Math.random();
-        if (po < .5) {
-            x = width * Math.random();
-            y = 0 - radius;
-        } else if (po >= .5 && po < 0.7) {
-
-            x = 0 - radius;
-            y = (height - person.radius) * Math.random();
-
-        } else {
-            x = width + radius;
-            y = (height - person.radius) * Math.random();
-
-        }
+        let max: number = score / 1000 + 1;
 
 
 
-        const speed: velocity = {
-
-            y: 1,
-            x: 0
-
-        }
-
-        if (Math.random() < .5) {
+        for (let i = 0; i < max; i++) {
 
 
-            const x1: number = person.x - x;
-            const y1: number = person.y - y;
-            const angle = Math.atan2(y1, x1);
 
-            speed.x = Math.cos(angle)
-            speed.y = Math.sin(angle)
-        }
+            const radius: number = Math.random() * (40 - 10) + 10;
+
+            const index: number = Math.floor(Math.random() * color.length);
+            // const color
+
+            let x: number;
+            let y: number;
 
 
-        const factor: number =
-            Math.random() < 0.1
-                ?
-                score > 50
+            const po: number = Math.random();
+            if (po < .5) {
+                x = width * Math.random();
+                y = 0 - radius;
+            } else if (po >= .5 && po < 0.7) {
+
+                x = 0 - radius;
+                y = (height - person.radius) * Math.random();
+
+            } else {
+                x = width + radius;
+                y = (height - person.radius) * Math.random();
+
+            }
+
+
+
+            const speed: velocity = {
+
+                y: 1,
+                x: 0
+
+            }
+
+            if (Math.random() < .3) {
+
+
+                const x1: number = person.x - x;
+                const y1: number = person.y - y;
+                const angle = Math.atan2(y1, x1);
+
+                speed.x = Math.cos(angle)
+                speed.y = Math.sin(angle)
+            }
+
+
+            const factor: number =
+                Math.random() < 0.1
                     ?
-                    
-                   score>100?
-                    5
-                    :
-                    3
-                    :
-                    score>100?
-                    4
-                    :
-                    2
-                :
-                Math.random() < 0.5
-                    ?
-                    2
-                    :
-                    1;
+                    score > 500
+                        ?
 
-        Enemys.push(new Enemy(x, y, radius, color[index], speed, factor))
+                        score > 1000 ?
+                            5
+                            :
+                            3
+                        :
+                        score > 1000 ?
+                            4
+                            :
+                            2
+                    :
+                    Math.random() < 0.2
+                        ?
+                        2
+                        :
+                        1;
 
-        // console.log(Enemys, ProjectPoints)
-    }
+            Enemys.push(new Enemy(x, y, radius, color[index], speed, factor))
+
+            // console.log(Enemys, ProjectPoints)
+        }
     }, 1500)
     // call for gun hoot
     animate()
@@ -392,16 +408,14 @@ function Start(): void {
 
 
 function ReSet(): void {
-    btn_ans.innerHTML=""+score;
+    btn_ans.innerHTML = "" + score;
     BoxMain.classList.remove("none")
-    if(!GestsPlay){
-        if(dom.isWaitBoxDisplay()){
-            dom.showShow_Score()
-        }
-    }else{
-     
+    if (!GestsPlay) {
+
+    } else {
+
         dom.removeNameBox()
-   
+
         dom.showShow_Score()
     }
     cancelAnimationFrame(animateId)
@@ -409,7 +423,7 @@ function ReSet(): void {
     ProjectPoints = [];
     Particals = []
     // score = 0;
-    ctx.clearRect(0,0,canvas.width,canvas.height)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     // ctx.clearRect()
     shoot.pause()
     btn.innerHTML = "" + score;
@@ -421,9 +435,10 @@ function ReSet(): void {
 }
 
 
-function StartGuest(){
-    GestsPlay=true;
+function StartGuest() {
+    GestsPlay = true;
     Start();
+    dom.playGunShoot()
 }
 
 

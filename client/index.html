@@ -13,6 +13,23 @@
         margin: 0;
         padding: 0;
         -webkit-tap-highlight-color: transparent;
+      
+    }
+
+    button{
+        -webkit-touch-callout: none;
+        /* iOS Safari */
+        -webkit-user-select: none;
+        /* Safari */
+        -khtml-user-select: none;
+        /* Konqueror HTML */
+        -moz-user-select: none;
+        /* Old versions of Firefox */
+        -ms-user-select: none;
+        /* Internet Explorer/Edge */
+        user-select: none;
+        /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
     }
 
     body {
@@ -51,7 +68,7 @@
         padding: 2.5rem;
         font-weight: border;
         border-radius: 12px;
-     
+
 
 
     }
@@ -61,7 +78,8 @@
         margin: .3rem 0;
         font-weight: bolder;
     }
-    #Player{
+
+    #Player {
         text-align: center;
     }
 
@@ -80,11 +98,12 @@
         font-size: 1.5rem;
         margin: .3rem;
         border-radius: 3px;
-        width:100%;
+        width: 100%;
 
     }
 
-    .line-draw>button:hover {
+    .line-draw>button:hover,
+    button:hover {
         background-color: red;
     }
 
@@ -92,8 +111,9 @@
         text-align: center;
         color: red;
     }
-    .tutorial *{
-        margin:.3rem 0;
+
+    .tutorial * {
+        margin: .3rem 0;
         padding: .3rem 0;
     }
 
@@ -121,7 +141,6 @@
         top: 0%;
         right: 0% !important;
     }
-
 </style>
 
 <body>
@@ -146,17 +165,17 @@
             <h4>👉 Move the Hero (⏪ and ⏩ )</h4>
             <h4>👉 Fire (Click on the enemy or ⏫ )</h4>
             <h3>🏹 For Mobile</h3>
-    
+
             <h4>👉 Fire (Click on the enemy )</h4>
             <h2>🤙 Mode Of Game</h2>
             <h4>👉 Guest Mode</h4>
             <h4>👉 Multiplayer Mode</h4>
-        
+
             <button onclick="ToggleTutorial()">Back</button>
         </div>
 
         <div class="main name_container">
-            
+
             <h1>Enter Name Hero Name</h1>
             <input id="name">
             <button onclick="AddUser()">Enter</button>
@@ -164,30 +183,30 @@
             <button onclick="StartGuest()">Play As Guest</button>
         </div>
 
-        <div class="main PlayBox none">
-            
-            <h1>
-                <span id="EnemyName"></span>,
-                Challenged You
-            </h1>
-            
-            
-            <button onclick="Accepted()">Play With Him</button>
-            <button onclick="NotAccepted()">Back</button>
-        </div>
-        
-        
-        
         <div class="main none enemy_container">
             <p>Active: 🟢 <span id="total"></span></p>
-            <p id="you"></p>
-            
+            <p>Name: <span id="you"></span></p>
+
             <h1>Enter Name To Find</h1>
             <input id="enemy">
             <button onclick="FindThePlayer()">Find</button>
             <button onclick="Reload()">Back</button>
         </div>
-        
+
+        <div class="main PlayBox none">
+
+            <h1>
+                <span id="EnemyName"></span>,
+                Challenged You
+            </h1>
+
+
+            <button onclick="Accepted()">Play With Him</button>
+            <button onclick="NotAccepted()">Back</button>
+        </div>
+
+
+
         <div class="score none">
             <h1 id="result" class="red"></h1>
             <p id="Player"></p>
@@ -199,7 +218,9 @@
             <p>Let, see If Enemy Able to Bit You </p>
         </div>
     </div>
-    <audio src="./1.mp3" id="Shoot"></audio>
+    <audio src="./public/1.mp3" id="bg"></audio>
+    <audio src="./public/2.mp3" id="Shoot"></audio>
+    <audio src="./public/3.mp3" id="gun"></audio>
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
@@ -208,4 +229,5 @@
 <script type="text/javascript" src="/build/Variable.js"></script>
 <script type="text/javascript" src="/build/socket.js"></script>
 <script type="text/javascript" src="/build/index.js"></script>
+
 </html>
