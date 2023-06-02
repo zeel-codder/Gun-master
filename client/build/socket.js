@@ -6,7 +6,7 @@ var EnemyEndPoint = -1;
 var GestsPlay = false;
 var dom = new Document_Control();
 // var socket = io("http://localhost:3000/");
-var socket = io("https://gameshoot123.herokuapp.com");
+var socket = io("https://game-master-be.zeelcodder.repl.co/");
 socket.on("UserRefuse", function (to) {
     //console.log(to, 123)
     if (to == you) {
@@ -17,7 +17,7 @@ socket.on("UpdateScore", function (to, value) {
     //console.log('callfind')
     dom.setEnemyScore(value);
 });
-socket.on('All', function (to, form) {
+socket.on("All", function (to, form) {
     console.log(to, you, to == you);
     if (to == you) {
         tem = form;
@@ -44,11 +44,11 @@ socket.on("EnterRoom", function (roomId, to, form) {
         if (dom.isLoadDisplay()) {
             dom.removeLoad();
         }
-        socket.emit('JoinRoom', RoomId, you);
+        socket.emit("JoinRoom", RoomId, you);
         Start();
     }
 });
-socket.on('TotalPlayerChange', function (total) {
+socket.on("TotalPlayerChange", function (total) {
     dom.setNumberOfPlayer(total);
 });
 socket.on("YourEnd", function (roomId, value, score) {
@@ -85,7 +85,7 @@ function Home() {
         EnemyEndPoint = -1;
     }
     GestsPlay = false;
-    dom.setInput_Enemy('');
+    dom.setInput_Enemy("");
 }
 function ShowResult(score) {
     if (dom.isPlayBoxDisplay()) {
@@ -128,7 +128,7 @@ function YourMathEnd(score) {
 }
 function display(data) {
     Message.innerHTML = "" + data;
-    setTimeout(function () { return Message.innerHTML = ""; }, 3000);
+    setTimeout(function () { return (Message.innerHTML = ""); }, 3000);
 }
 function FindThePlayer() {
     score = 0;
@@ -161,7 +161,7 @@ function AddUser() {
     if (you == null || you.length == 0)
         return;
     dom.ToggleLoad();
-    socket.emit('AddUser', you, function (type) {
+    socket.emit("AddUser", you, function (type) {
         ResponseEvent(type, function () {
             Input_Name_p.innerHTML = "" + you;
             dom.removeNameBox();
@@ -184,9 +184,9 @@ function Accepted() {
     EnemyEndPoint = -1;
     dom.setMyScore(0);
     dom.setEnemyScore(0);
-    socket.emit('ChallengeAccepted', you, enemy);
+    socket.emit("ChallengeAccepted", you, enemy);
     dom.removePlayBox();
-    dom.setInput_Enemy('');
+    dom.setInput_Enemy("");
     dom.playGunShoot();
     if (!dom.isLoadDisplay()) {
         dom.showLoad();
@@ -195,14 +195,14 @@ function Accepted() {
 function NotAccepted() {
     dom.removePlayBox();
     dom.showEnemyBox();
-    socket.emit('ChallengeAcceptedNotExcepted', you, tem);
+    socket.emit("ChallengeAcceptedNotExcepted", you, tem);
     tem = "";
-    dom.setInput_Enemy('');
+    dom.setInput_Enemy("");
     dom.playGunShoot();
 }
 function ToggleTutorial() {
-    NameBox.classList.toggle('none');
-    Tutorial.classList.toggle('none');
+    NameBox.classList.toggle("none");
+    Tutorial.classList.toggle("none");
     dom.playGunShoot();
 }
 function Reload() {
