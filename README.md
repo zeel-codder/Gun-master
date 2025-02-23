@@ -18,6 +18,8 @@ A Multiplayer Shotting Game Build in Html5 canvas and Node js. A hero can shoot 
 4. Run server
     ```bash
     npm run dev
+    cd client && tsc --watch
+    cd server && tsc --watch
     ```
 5. Open index.html file (open with server like vs code live server)
 
