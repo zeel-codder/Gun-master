@@ -5,7 +5,7 @@ var RoomId = "";
 var EnemyEndPoint = -1;
 var GestsPlay = false;
 var dom = new Document_Control();
-var socket = io("http://localhost:3000/");
+var socket = io("https://gun-master-backend.modulezp.com/");
 // var socket = io("https://game-master-be.zeelcodder.repl.co/");
 socket.on("UserRefuse", function (to) {
     //console.log(to, 123)
